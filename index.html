@@ -3,1252 +3,760 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>تراث اليمن - المنتجات التراثية الاصيلة</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>متجر تراث اليمن - أصالة وفخامة</title>
+    <!-- Google Fonts: Readex Pro & Cairo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts (Amiri & Cairo) -->
-    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- SheetJS (xlsx) for Exporting Excel -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- jsPDF & autoTable for Exporting PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        yemen: {
-                            red: '#CE1126',
-                            gold: '#D4AF37',
-                            brown: '#8B4513',
-                            dark: '#1A1A1A',
-                            sand: '#FDFBF7'
-                        }
-                    },
-                    fontFamily: {
-                        cairo: ['Cairo', 'sans-serif'],
-                        amiri: ['Amiri', 'serif']
-                    }
-                }
-            }
-        }
-    </script>
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #FDFBF7; }
-        .font-tradition { font-family: 'Amiri', serif; }
+        :root {
+            --primary-gold: #C59B27;
+            --primary-dark-gold: #9E7916;
+            --bg-cream: #FDFBF7;
+            --text-dark: #1E140C;
+            --text-muted: #6B5E52;
+            --card-bg: #FFFFFF;
+            --whatsapp-green: #25D366;
+            --danger-red: #E53E3E;
+            --border-color: #EFE8DC;
+            --shadow-sm: 0 4px 12px rgba(30, 20, 12, 0.05);
+            --shadow-hover: 0 12px 28px rgba(30, 20, 12, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Readex Pro', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding-bottom: 60px;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+        }
+
+        .logo i {
+            color: var(--primary-gold);
+            font-size: 1.6rem;
+        }
+
+        .admin-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+        }
+
+        .admin-btn:hover {
+            border-color: var(--primary-gold);
+            color: var(--primary-gold);
+        }
+
+        /* Hero Banner */
+        .hero {
+            position: relative;
+            height: 380px;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #fff;
+            margin-bottom: 30px;
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+            overflow: hidden;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(180deg, rgba(30, 20, 12, 0.4) 0%, rgba(30, 20, 12, 0.8) 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+            padding: 20px;
+        }
+
+        .hero-content h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #FFF;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .hero-content p {
+            font-size: 1.1rem;
+            color: #E2D8CE;
+            margin-bottom: 20px;
+        }
+
+        /* Trust Badges Bar */
+        .trust-bar {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 6px 14px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+        }
+
+        .trust-item i {
+            color: var(--primary-gold);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Categories Filter */
+        .categories-wrapper {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding: 10px 0 20px 0;
+            scrollbar-width: none;
+        }
+
+        .categories-wrapper::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-pill {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 10px 22px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .category-pill.active, .category-pill:hover {
+            background: var(--primary-gold);
+            color: #FFF;
+            border-color: var(--primary-gold);
+            box-shadow: 0 4px 15px rgba(197, 155, 39, 0.3);
+        }
+
+        /* Section Title */
+        .section-header {
+            margin: 25px 0 15px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-header h2 {
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header h2::before {
+            content: '';
+            width: 5px;
+            height: 22px;
+            background: var(--primary-gold);
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        /* Product Grid */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        /* Product Card */
+        .product-card {
+            background: var(--card-bg);
+            border-radius: 18px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card-img-wrapper {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            overflow: hidden;
+            background: #F4EFEA;
+        }
+
+        .card-img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover .card-img-wrapper img {
+            transform: scale(1.08);
+        }
+
+        .badge-discount {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--danger-red);
+            color: #FFF;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 12px;
+            z-index: 2;
+        }
+
+        .badge-tag {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(30, 20, 12, 0.75);
+            color: #FFF;
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+            backdrop-filter: blur(4px);
+        }
+
+        .card-body {
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+
+        .product-category-name {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .price-container {
+            margin-top: auto;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .current-price {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary-dark-gold);
+        }
+
+        .old-price {
+            font-size: 0.9rem;
+            color: #A09386;
+            text-decoration: line-through;
+        }
+
+        .price-currency {
+            font-size: 0.8rem;
+            font-weight: normal;
+        }
+
+        .btn-whatsapp {
+            background: var(--whatsapp-green);
+            color: #FFF;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: background 0.3s ease;
+        }
+
+        .btn-whatsapp:hover {
+            background: #1EBE5D;
+        }
+
+        /* Floating WhatsApp Button */
+        .floating-whatsapp {
+            position: fixed;
+            bottom: 25px;
+            left: 25px;
+            background: var(--whatsapp-green);
+            color: #FFF;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+            z-index: 999;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .floating-whatsapp:hover {
+            transform: scale(1.1);
+        }
+
+        /* Admin Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #FFF;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--shadow-hover);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .btn-submit {
+            background: var(--primary-gold);
+            color: #FFF;
+            border: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero { height: 300px; }
+            .hero-content h1 { font-size: 1.8rem; }
+            .hero-content p { font-size: 0.95rem; }
+            .trust-bar { display: none; }
+        }
     </style>
 </head>
-<body class="text-gray-800 antialiased selection:bg-yemen-gold selection:text-white">
+<body>
 
-    <!-- Navbar -->
-    <header class="bg-yemen-dark text-white sticky top-0 z-40 shadow-lg border-b-2 border-yemen-gold">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-4 space-x-reverse">
-                <a href="#" onclick="switchTab('store')" class="text-2xl font-bold font-tradition text-yemen-gold tracking-wide flex items-center gap-2">
-                    <img id="site-logo-img" src="" alt="Logo" class="h-10 w-auto object-contain hidden">
-                    <i id="site-logo-icon" class="fa-solid fa-gem text-yemen-gold"></i>
-                    <span id="site-logo-text">تراث اليمن</span>
-                </a>
-            </div>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <a href="#" class="logo">
+            <i class="fa-solid fa-crown"></i>
+            <span id="storeNameText">متجر تراث اليمن</span>
+        </a>
+        <button class="admin-btn" onclick="openAdminModal()">
+            <i class="fa-solid fa-user-lock"></i> لوحة التحكم
+        </button>
+    </nav>
 
-            <!-- Navigation Links -->
-            <nav class="hidden md:flex items-center space-x-6 space-x-reverse font-semibold">
-                <a href="#" onclick="switchTab('store')" class="hover:text-yemen-gold transition">المتجر</a>
-                <a href="#" onclick="switchTab('offers')" class="hover:text-yemen-gold transition text-yemen-red font-bold flex items-center gap-1">
-                    <i class="fa-solid fa-tags"></i> العروض والخصومات
-                </a>
-                <a href="#" onclick="switchTab('blog')" class="hover:text-yemen-gold transition">المدونة التراثية</a>
-                <a href="#" onclick="switchTab('reviews')" class="hover:text-yemen-gold transition">آراء العملاء</a>
-            </nav>
-
-            <!-- Currency & Admin Switcher -->
-            <div class="flex items-center space-x-4 space-x-reverse">
-                <!-- Currency Selector -->
-                <div class="flex items-center gap-1 bg-gray-800 px-3 py-1 rounded-md border border-gray-700">
-                    <i class="fa-solid fa-coins text-yemen-gold text-sm"></i>
-                    <select id="currency-select" onchange="changeCurrency(this.value)" class="bg-transparent text-sm font-semibold text-white focus:outline-none cursor-pointer">
-                        <option value="YER" class="bg-gray-800">ريال يمني (YER)</option>
-                        <option value="SAR" class="bg-gray-800">ريال سعودي (SAR)</option>
-                        <option value="USD" class="bg-gray-800">دولار أمريكي (USD)</option>
-                        <option value="JOD" class="bg-gray-800">دينار أردني (JOD)</option>
-                    </select>
-                </div>
-
-                <!-- Admin Button -->
-                <button onclick="toggleAdminModal()" class="bg-yemen-gold text-yemen-dark font-bold px-3 py-1.5 rounded text-sm hover:bg-yellow-500 transition flex items-center gap-2">
-                    <i class="fa-solid fa-user-shield"></i> <span id="admin-btn-text">لوحة التحكم</span>
-                </button>
+    <!-- Hero Banner -->
+    <section class="hero" id="heroSection" style="background-image: url('https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200');">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <h1 id="heroTitle">أصالة التراث اليماني بين يديك</h1>
+            <p>أجود أنواع العسل الطبيعي، العقيق اليماني الفاخر، والبن الخولاني الأصيل</p>
+            <div class="trust-bar">
+                <div class="trust-item"><i class="fa-solid fa-shield-halved"></i> جودة مضمونة 100%</div>
+                <div class="trust-item"><i class="fa-solid fa-truck-fast"></i> توصيل لكافة المناطق</div>
+                <div class="trust-item"><i class="fa-solid fa-hand-holding-dollar"></i> الدفع عند الاستلام</div>
             </div>
         </div>
-    </header>
+    </section>
 
-    <!-- Main Content Container -->
-    <main id="main-content" class="min-h-screen">
+    <!-- Main Container -->
+    <div class="container">
         
-        <!-- SECTION: STORE FRONT -->
-        <div id="view-store" class="view-section">
-            <!-- Hero Banner -->
-            <div class="relative bg-yemen-dark text-white py-20 px-4 overflow-hidden border-b-4 border-yemen-gold" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1578632767115-351597cf2477?q=80&w=1200') center/cover;">
-                <div class="container mx-auto text-center relative z-10">
-                    <h1 id="hero-title" class="text-4xl md:text-6xl font-bold font-tradition text-yemen-gold mb-4">أصالة التراث اليمني بين يديك</h1>
-                    <p id="hero-desc" class="text-lg md:text-xl max-w-2xl mx-auto text-gray-200 mb-8">نقدم لكم أجود أنواع العسل السدري العصيمي، البن اليمني الأصيل، الجنابي الثمينة والفضيات التراثية إلى جميع الدول العربية.</p>
-                    <div class="flex justify-center gap-4">
-                        <a href="#products-section" class="bg-yemen-gold text-yemen-dark font-bold px-6 py-3 rounded-lg shadow-lg hover:bg-yellow-500 transition">تسوق الآن</a>
-                        <a href="#" onclick="switchTab('offers')" class="bg-yemen-red text-white font-bold px-6 py-3 rounded-lg shadow-lg hover:bg-red-700 transition">استكشف العروض</a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Products Section -->
-            <div id="products-section" class="container mx-auto px-4 py-12">
-                <!-- Dynamic Category Filters -->
-                <div class="flex flex-wrap justify-center gap-2 mb-8" id="category-filters">
-                    <!-- Populated Dynamically -->
-                </div>
-
-                <!-- Products Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6" id="products-grid">
-                    <!-- Populated Dynamically -->
-                </div>
-            </div>
+        <!-- Categories Filter -->
+        <div class="categories-wrapper" id="categoriesContainer">
+            <button class="category-pill active" onclick="filterCategory('all', this)">الكل 🍯</button>
+            <!-- ستضاف الأقسام ديناميكياً -->
         </div>
 
-        <!-- SECTION: OFFERS FRONT -->
-        <div id="view-offers" class="view-section hidden container mx-auto px-4 py-12">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl font-bold font-tradition text-yemen-red mb-2"><i class="fa-solid fa-fire"></i> العروض والخصومات الخاصة</h2>
-                <p class="text-gray-600">استمتع بأفضل الأسعار على منتجاتنا التراثية المختارة لفترة محدودة</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6" id="offers-grid">
-                <!-- Populated Dynamically -->
-            </div>
+        <!-- Section Title -->
+        <div class="section-header">
+            <h2>منتجاتنا المختارة</h2>
         </div>
 
-        <!-- SECTION: BLOG FRONT -->
-        <div id="view-blog" class="view-section hidden container mx-auto px-4 py-12">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl font-bold font-tradition text-yemen-brown mb-2">مدونة التراث الثقافي اليمني</h2>
-                <p class="text-gray-600">مقالات ومعلومات قيمة حول تاريخ وصناعة المنتجات اليمنية الأصيلة</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8" id="blog-grid">
-                <!-- Populated Dynamically -->
-            </div>
+        <!-- Products Grid -->
+        <div class="products-grid" id="productsGrid">
+            <!-- ستضاف بطاقات المنتجات ديناميكياً -->
         </div>
 
-        <!-- SECTION: REVIEWS FRONT -->
-        <div id="view-reviews" class="view-section hidden container mx-auto px-4 py-12">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl font-bold font-tradition text-yemen-gold mb-2">آراء وتقييمات العملاء</h2>
-                <p class="text-gray-600">تجارب عملائنا الكرام في مختلف الدول العربية</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12" id="reviews-grid">
-                <!-- Populated Dynamically -->
-            </div>
-        </div>
+    </div>
 
-        <!-- SECTION: ADMIN DASHBOARD -->
-        <div id="view-admin" class="view-section hidden bg-gray-100 min-h-screen py-8">
-            <div class="container mx-auto px-4">
-                
-                <!-- Admin Header -->
-                <div class="bg-white p-6 rounded-lg shadow-md mb-8 flex flex-wrap justify-between items-center gap-4">
-                    <div>
-                        <h1 class="text-2xl font-bold text-gray-800">لوحة تحكم المتجر</h1>
-                        <p class="text-sm text-gray-500">المستخدم الحالي: <span id="current-user-name" class="font-bold text-yemen-gold">مسؤول النظام</span> (<span id="current-user-role" class="text-xs bg-gray-200 px-2 py-0.5 rounded">مدير عام</span>)</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="switchTab('store')" class="bg-gray-600 text-white px-4 py-2 rounded text-sm hover:bg-gray-700">معاينة المتجر</button>
-                        <button onclick="logoutAdmin()" class="bg-red-600 text-white px-4 py-2 rounded text-sm hover:bg-red-700">تسجيل الخروج</button>
-                    </div>
-                </div>
-
-                <!-- Admin Navigation Tabs -->
-                <div class="flex overflow-x-auto gap-2 bg-white p-2 rounded-lg shadow-sm mb-6 border-b" id="admin-tabs-nav">
-                    <button onclick="switchAdminTab('settings')" class="admin-tab-btn px-4 py-2 rounded-md font-semibold text-sm bg-yemen-gold text-yemen-dark">إعدادات الواجهة والاتصال</button>
-                    <button onclick="switchAdminTab('categories')" class="admin-tab-btn px-4 py-2 rounded-md font-semibold text-sm hover:bg-gray-100">التصنيفات</button>
-                    <button onclick="switchAdminTab('products')" class="admin-tab-btn px-4 py-2 rounded-md font-semibold text-sm hover:bg-gray-100">إدارة المنتجات</button>
-                    <button onclick="switchAdminTab('reports')" class="admin-tab-btn px-4 py-2 rounded-md font-semibold text-sm hover:bg-gray-100">تقارير المبيعات الأرباح</button>
-                    <button onclick="switchAdminTab('blog')" class="admin-tab-btn px-4 py-2 rounded-md font-semibold text-sm hover:bg-gray-100">المحرر والمدونة</button>
-                    <button onclick="switchAdminTab('reviews')" class="admin-tab-btn px-4 py-2 rounded-md font-semibold text-sm hover:bg-gray-100">المراجعات</button>
-                    <button onclick="switchAdminTab('users')" id="tab-btn-users" class="admin-tab-btn px-4 py-2 rounded-md font-semibold text-sm hover:bg-gray-100">صلاحيات المستخدمين</button>
-                </div>
-
-                <!-- Admin Tab 1: Settings -->
-                <div id="admin-settings" class="admin-content-section bg-white p-6 rounded-lg shadow-md">
-                    <h3 class="text-xl font-bold mb-4 border-b pb-2">إعدادات الواجهة، النصوص وروابط التواصل</h3>
-                    <form onsubmit="saveStoreSettings(event)" class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-bold mb-1">اسم المتجر</label>
-                                <input type="text" id="setting-store-name" class="w-full border p-2 rounded">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold mb-1">رابط صورة الشعار (Logo Image URL)</label>
-                                <input type="text" id="setting-store-logo" placeholder="اتركه فارغاً لاستخدام الأيقونة النمطية" class="w-full border p-2 rounded">
-                            </div>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-bold mb-1">عنوان البانر الرئيسي</label>
-                                <input type="text" id="setting-hero-title" class="w-full border p-2 rounded">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold mb-1">وصف المتجر والبانر</label>
-                                <textarea id="setting-hero-desc" rows="2" class="w-full border p-2 rounded"></textarea>
-                            </div>
-                        </div>
-                        <hr class="my-4">
-                        <h4 class="font-bold text-gray-700">روابط التواصل الاجتماعي والدعم</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-bold mb-1"><i class="fa-brands fa-whatsapp text-green-600"></i> رقم الواتساب (مع رمز الدولة بدون +)</label>
-                                <input type="text" id="setting-whatsapp" placeholder="962788119514" class="w-full border p-2 rounded">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold mb-1"><i class="fa-brands fa-facebook text-blue-600"></i> رابط الفيسبوك</label>
-                                <input type="text" id="setting-facebook" class="w-full border p-2 rounded">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold mb-1"><i class="fa-brands fa-instagram text-pink-600"></i> رابط انستغرام</label>
-                                <input type="text" id="setting-instagram" class="w-full border p-2 rounded">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-bold mb-1"><i class="fa-brands fa-tiktok text-black"></i> رابط تيك توك</label>
-                                <input type="text" id="setting-tiktok" class="w-full border p-2 rounded">
-                            </div>
-                        </div>
-                        <button type="submit" class="bg-yemen-gold text-yemen-dark font-bold px-6 py-2 rounded shadow hover:bg-yellow-500">حفظ التغييرات</button>
-                    </form>
-                </div>
-
-                <!-- Admin Tab 2: Categories -->
-                <div id="admin-categories" class="admin-content-section bg-white p-6 rounded-lg shadow-md hidden">
-                    <h3 class="text-xl font-bold mb-4 border-b pb-2">إدارة تصنيفات المنتجات</h3>
-                    <div class="flex gap-4 mb-6">
-                        <input type="text" id="new-category-name" placeholder="اسم التصنيف الجديد" class="border p-2 rounded flex-1">
-                        <button onclick="addCategory()" class="bg-yemen-gold text-yemen-dark font-bold px-4 py-2 rounded">إضافة تصنيف</button>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-right border-collapse">
-                            <thead>
-                                <tr class="bg-gray-100 border-b">
-                                    <th class="p-3">المعرف</th>
-                                    <th class="p-3">اسم التصنيف</th>
-                                    <th class="p-3">إجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="categories-table-body">
-                                <!-- Populated Dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Admin Tab 3: Products -->
-                <div id="admin-products" class="admin-content-section bg-white p-6 rounded-lg shadow-md hidden">
-                    <div class="flex justify-between items-center mb-4 border-b pb-2">
-                        <h3 class="text-xl font-bold">إدارة المنتجات</h3>
-                        <button onclick="openProductModal()" class="bg-yemen-gold text-yemen-dark font-bold px-4 py-2 rounded text-sm">+ إضافة منتج جديد</button>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-right border-collapse">
-                            <thead>
-                                <tr class="bg-gray-100 border-b text-sm">
-                                    <th class="p-2">الصورة</th>
-                                    <th class="p-2">اسم المنتج</th>
-                                    <th class="p-2">التصنيف</th>
-                                    <th class="p-2">السعر (YER)</th>
-                                    <th class="p-2">التكلفة (YER)</th>
-                                    <th class="p-2">عرض خاص؟</th>
-                                    <th class="p-2">تسجيل بيع</th>
-                                    <th class="p-2">إجراءات</th>
-                                </tr>
-                            </thead>
-                            <tbody id="products-table-body">
-                                <!-- Populated Dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Admin Tab 4: Sales & Profit Reports -->
-                <div id="admin-reports" class="admin-content-section bg-white p-6 rounded-lg shadow-md hidden">
-                    <div class="flex flex-wrap justify-between items-center mb-6 border-b pb-4 gap-4">
-                        <div>
-                            <h3 class="text-xl font-bold">تقارير المبيعات والأرباح الإجمالية</h3>
-                            <p class="text-xs text-gray-500">تتم أرشفة التكلفة والربح وقت البيع لضمان دقة التقارير حتى لو تغير سعر المنتج لاحقاً.</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="exportSalesExcel()" class="bg-green-700 text-white font-bold px-4 py-2 rounded text-sm flex items-center gap-2"><i class="fa-solid fa-file-excel"></i> تصدير Excel</button>
-                            <button onclick="exportSalesPDF()" class="bg-red-700 text-white font-bold px-4 py-2 rounded text-sm flex items-center gap-2"><i class="fa-solid fa-file-pdf"></i> تصدير PDF</button>
-                        </div>
-                    </div>
-
-                    <!-- Statistics Cards -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                            <span class="text-sm text-blue-600 block font-semibold">إجمالي عدد المبيعات</span>
-                            <span id="stat-total-sales-count" class="text-2xl font-bold text-blue-900">0</span>
-                        </div>
-                        <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-                            <span class="text-sm text-green-600 block font-semibold">إجمالي الإيرادات (YER)</span>
-                            <span id="stat-total-revenue" class="text-2xl font-bold text-green-900">0</span>
-                        </div>
-                        <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                            <span class="text-sm text-yellow-700 block font-semibold">إجمالي الربح الصافي (YER)</span>
-                            <span id="stat-total-profit" class="text-2xl font-bold text-yellow-900">0</span>
-                        </div>
-                    </div>
-
-                    <!-- Sales History Table -->
-                    <h4 class="font-bold text-gray-700 mb-2">سجل العمليات الإفرادية:</h4>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-right border-collapse">
-                            <thead>
-                                <tr class="bg-gray-100 border-b text-sm">
-                                    <th class="p-2">معرف العملية</th>
-                                    <th class="p-2">التاريخ والوقت</th>
-                                    <th class="p-2">المنتج</th>
-                                    <th class="p-2">الكمية</th>
-                                    <th class="p-2">سعر البيع/وحدة</th>
-                                    <th class="p-2">تكلفة وحدة (وقت البيع)</th>
-                                    <th class="p-2">إجمالي الربح</th>
-                                </tr>
-                            </thead>
-                            <tbody id="sales-table-body">
-                                <!-- Populated Dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Admin Tab 5: Blog Management -->
-                <div id="admin-blog" class="admin-content-section bg-white p-6 rounded-lg shadow-md hidden">
-                    <div class="flex justify-between items-center mb-4 border-b pb-2">
-                        <h3 class="text-xl font-bold">محرر المقالات والمدونة</h3>
-                        <button onclick="openBlogModal()" class="bg-yemen-gold text-yemen-dark font-bold px-4 py-2 rounded text-sm">+ إضافة مقال جديد</button>
-                    </div>
-                    <div class="space-y-4" id="admin-blog-list">
-                        <!-- Populated Dynamically -->
-                    </div>
-                </div>
-
-                <!-- Admin Tab 6: Reviews Management -->
-                <div id="admin-reviews" class="admin-content-section bg-white p-6 rounded-lg shadow-md hidden">
-                    <div class="flex justify-between items-center mb-4 border-b pb-2">
-                        <h3 class="text-xl font-bold">إدارة مراجعات وآراء العملاء</h3>
-                        <button onclick="openReviewModal()" class="bg-yemen-gold text-yemen-dark font-bold px-4 py-2 rounded text-sm">+ إضافة مراجعة</button>
-                    </div>
-                    <div class="space-y-4" id="admin-reviews-list">
-                        <!-- Populated Dynamically -->
-                    </div>
-                </div>
-
-                <!-- Admin Tab 7: User Permissions -->
-                <div id="admin-users" class="admin-content-section bg-white p-6 rounded-lg shadow-md hidden">
-                    <h3 class="text-xl font-bold mb-4 border-b pb-2">إدارة المستخـدمين والصلاحيات</h3>
-                    <div class="bg-gray-50 p-4 rounded border mb-6">
-                        <h4 class="font-bold text-sm mb-2">إضافة مستخدم جديد</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-2">
-                            <input type="text" id="new-user-name" placeholder="اسم المستخدم" class="border p-2 rounded text-sm">
-                            <input type="password" id="new-user-pass" placeholder="كلمة المرور" class="border p-2 rounded text-sm">
-                            <select id="new-user-role" class="border p-2 rounded text-sm">
-                                <option value="admin">مدير عام (صلاحية كاملة)</option>
-                                <option value="editor">محرر (منتجات ومدونة ومراجعات فقط)</option>
-                            </select>
-                            <button onclick="addUser()" class="bg-yemen-gold text-yemen-dark font-bold px-4 py-2 rounded text-sm">إضافة</button>
-                        </div>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-right border-collapse">
-                            <thead>
-                                <tr class="bg-gray-100 border-b text-sm">
-                                    <th class="p-2">اسم المستخدم</th>
-                                    <th class="p-2">الصلاحية</th>
-                                    <th class="p-2">إجراء</th>
-                                </tr>
-                            </thead>
-                            <tbody id="users-table-body">
-                                <!-- Populated Dynamically -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-    </main>
-
-    <!-- Footer & Social Links -->
-    <footer class="bg-yemen-dark text-white border-t-2 border-yemen-gold py-10 mt-12">
-        <div class="container mx-auto px-4 text-center">
-            <h3 class="font-tradition text-2xl text-yemen-gold mb-2" id="footer-store-name">تراث اليمن</h3>
-            <p class="text-gray-400 text-sm mb-6">علامة تجارية متخصصة في نشر وتصدير التراث اليمني الاصيل بكافة الدول العربية</p>
-            
-            <div class="flex justify-center space-x-6 space-x-reverse mb-6 text-xl">
-                <a id="link-facebook" href="#" target="_blank" class="text-gray-300 hover:text-yemen-gold"><i class="fa-brands fa-facebook"></i></a>
-                <a id="link-instagram" href="#" target="_blank" class="text-gray-300 hover:text-yemen-gold"><i class="fa-brands fa-instagram"></i></a>
-                <a id="link-tiktok" href="#" target="_blank" class="text-gray-300 hover:text-yemen-gold"><i class="fa-brands fa-tiktok"></i></a>
-                <a id="link-whatsapp" href="#" target="_blank" class="text-gray-300 hover:text-yemen-gold"><i class="fa-brands fa-whatsapp"></i></a>
-            </div>
-
-            <p class="text-xs text-gray-500">&copy; <span id="year">2026</span> جميع الحقوق محفوظة لمتجر التراث اليمني.</p>
-        </div>
-    </footer>
-
-    <!-- Floating WhatsApp Support Button -->
-    <a id="floating-whatsapp" href="#" target="_blank" class="fixed bottom-6 left-6 bg-green-500 text-white p-4 rounded-full shadow-2xl z-50 hover:bg-green-600 transition flex items-center justify-center text-3xl hidden">
+    <!-- Floating WhatsApp -->
+    <a href="https://wa.me/967770000000" target="_blank" class="floating-whatsapp" title="تواصل معنا عبر واتساب">
         <i class="fa-brands fa-whatsapp"></i>
     </a>
 
-    <!-- Modal: Login Admin -->
-    <div id="modal-login" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg p-6 w-full max-w-md relative">
-            <button onclick="toggleAdminModal()" class="absolute top-3 left-3 text-gray-500"><i class="fa-solid fa-xmark text-xl"></i></button>
-            <h3 class="text-xl font-bold mb-4 text-center font-tradition text-yemen-dark">تسجيل الدخول للوحة التحكم</h3>
-            <form onsubmit="handleLogin(event)" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-bold mb-1">اسم المستخدم</label>
-                    <input type="text" id="login-username" required class="w-full border p-2 rounded">
+    <!-- Admin Login / Control Modal -->
+    <div class="modal" id="adminModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle"><i class="fa-solid fa-lock"></i> تسجيل دخول الادمن</h3>
+                <button class="close-btn" onclick="closeAdminModal()">&times;</button>
+            </div>
+            
+            <!-- Login Form -->
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>اسم المستخدم</label>
+                    <input type="text" id="loginUser" class="form-control" required placeholder="admin">
                 </div>
-                <div>
-                    <label class="block text-sm font-bold mb-1">كلمة المرور</label>
-                    <input type="password" id="login-password" required class="w-full border p-2 rounded">
+                <div class="form-group">
+                    <label>كلمة المرور</label>
+                    <input type="password" id="loginPass" class="form-control" required placeholder="admin123">
                 </div>
-                <button type="submit" class="w-full bg-yemen-gold text-yemen-dark font-bold py-2 rounded hover:bg-yellow-500">دخول</button>
+                <button type="submit" class="btn-submit">دخول</button>
             </form>
-        </div>
-    </div>
 
-    <!-- Modal: Product (Add/Edit) -->
-    <div id="modal-product" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg p-6 w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeProductModal()" class="absolute top-3 left-3 text-gray-500"><i class="fa-solid fa-xmark text-xl"></i></button>
-            <h3 id="modal-product-title" class="text-xl font-bold mb-4">إضافة منتج جديد</h3>
-            <form onsubmit="saveProduct(event)" class="space-y-3">
-                <input type="hidden" id="prod-id">
-                <div>
-                    <label class="block text-sm font-bold mb-1">اسم المنتج</label>
-                    <input type="text" id="prod-title" required class="w-full border p-2 rounded">
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-sm font-bold mb-1">التصنيف</label>
-                        <select id="prod-category" class="w-full border p-2 rounded"></select>
+            <!-- Quick Add Product (For Logged-in Admin) -->
+            <div id="adminPanel" style="display: none;">
+                <h4>إضافة منتج جديد</h4>
+                <form onsubmit="handleAddProduct(event)" style="margin-top: 15px;">
+                    <div class="form-group">
+                        <label>اسم المنتج</label>
+                        <input type="text" id="prodTitle" class="form-control" required>
                     </div>
-                    <div>
-                        <label class="block text-sm font-bold mb-1">رابط الصورة</label>
-                        <input type="text" id="prod-image" required class="w-full border p-2 rounded">
+                    <div class="form-group">
+                        <label>السعر (ر.ي)</label>
+                        <input type="number" id="prodPrice" class="form-control" required>
                     </div>
-                </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-sm font-bold mb-1">سعر البيع (بالريال اليمني YER)</label>
-                        <input type="number" id="prod-price" required class="w-full border p-2 rounded">
+                    <div class="form-group">
+                        <label>رابط الصورة</label>
+                        <input type="url" id="prodImage" class="form-control" placeholder="https://..." required>
                     </div>
-                    <div>
-                        <label class="block text-sm font-bold mb-1">سعر التكلفة (YER)</label>
-                        <input type="number" id="prod-cost" required class="w-full border p-2 rounded">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-sm font-bold mb-1">وصف المنتج</label>
-                    <textarea id="prod-desc" rows="3" class="w-full border p-2 rounded"></textarea>
-                </div>
-                <div class="flex items-center gap-2">
-                    <input type="checkbox" id="prod-is-offer" class="w-4 h-4">
-                    <label for="prod-is-offer" class="text-sm font-bold text-yemen-red">عرض خاص / خفض سعر؟</label>
-                </div>
-                <button type="submit" class="w-full bg-yemen-gold text-yemen-dark font-bold py-2 rounded">حفظ المنتج</button>
-            </form>
+                    <button type="submit" class="btn-submit">حفظ المنتج</button>
+                </form>
+            </div>
         </div>
     </div>
 
-    <!-- Modal: Record Sale -->
-    <div id="modal-sale" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg p-6 w-full max-w-sm relative">
-            <button onclick="closeSaleModal()" class="absolute top-3 left-3 text-gray-500"><i class="fa-solid fa-xmark text-xl"></i></button>
-            <h3 class="text-xl font-bold mb-2">تسجيل عملية بيع جديدة</h3>
-            <p id="sale-prod-title" class="text-sm font-semibold text-yemen-gold mb-4"></p>
-            <form onsubmit="submitSale(event)" class="space-y-4">
-                <input type="hidden" id="sale-prod-id">
-                <div>
-                    <label class="block text-sm font-bold mb-1">الكمية المباعة</label>
-                    <input type="number" id="sale-qty" value="1" min="1" required class="w-full border p-2 rounded">
-                </div>
-                <button type="submit" class="w-full bg-green-600 text-white font-bold py-2 rounded hover:bg-green-700">تأكيد وحفظ البيع</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal: Blog Editor -->
-    <div id="modal-blog" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg p-6 w-full max-w-lg relative max-h-[90vh] overflow-y-auto">
-            <button onclick="closeBlogModal()" class="absolute top-3 left-3 text-gray-500"><i class="fa-solid fa-xmark text-xl"></i></button>
-            <h3 class="text-xl font-bold mb-4">محرر المقالات</h3>
-            <form onsubmit="saveBlog(event)" class="space-y-3">
-                <input type="hidden" id="blog-id">
-                <div>
-                    <label class="block text-sm font-bold mb-1">عنوان المقال</label>
-                    <input type="text" id="blog-title" required class="w-full border p-2 rounded">
-                </div>
-                <div>
-                    <label class="block text-sm font-bold mb-1">رابط صورة المقال</label>
-                    <input type="text" id="blog-image" required class="w-full border p-2 rounded">
-                </div>
-                <div>
-                    <label class="block text-sm font-bold mb-1">محتوى المقال</label>
-                    <textarea id="blog-content" rows="6" required class="w-full border p-2 rounded"></textarea>
-                </div>
-                <button type="submit" class="w-full bg-yemen-gold text-yemen-dark font-bold py-2 rounded">حفظ المقال</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal: Review Editor -->
-    <div id="modal-review" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-        <div class="bg-white rounded-lg p-6 w-full max-w-md relative">
-            <button onclick="closeReviewModal()" class="absolute top-3 left-3 text-gray-500"><i class="fa-solid fa-xmark text-xl"></i></button>
-            <h3 class="text-xl font-bold mb-4">إضافة مراجعة جديدة</h3>
-            <form onsubmit="saveReview(event)" class="space-y-3">
-                <div>
-                    <label class="block text-sm font-bold mb-1">اسم العميل</label>
-                    <input type="text" id="rev-name" required class="w-full border p-2 rounded">
-                </div>
-                <div>
-                    <label class="block text-sm font-bold mb-1">الدولة</label>
-                    <input type="text" id="rev-country" placeholder="السعودية، الإمارات، الأردن..." required class="w-full border p-2 rounded">
-                </div>
-                <div>
-                    <label class="block text-sm font-bold mb-1">التقييم (1-5)</label>
-                    <select id="rev-rating" class="w-full border p-2 rounded">
-                        <option value="5">5 نجوم</option>
-                        <option value="4">4 نجوم</option>
-                        <option value="3">3 نجوم</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-bold mb-1">التعليق</label>
-                    <textarea id="rev-comment" rows="3" required class="w-full border p-2 rounded"></textarea>
-                </div>
-                <button type="submit" class="w-full bg-yemen-gold text-yemen-dark font-bold py-2 rounded">حفظ المراجعة</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- JavaScript & Supabase Integration -->
     <script>
-        const exchangeRates = { YER: 1, SAR: 0.0024, USD: 0.00064, JOD: 0.00045 };
-        const currencySymbols = { YER: 'ر.ي', SAR: 'ر.س', USD: '$', JOD: 'د.أ' };
+        // 1. إعدادات Supabase (استبدل القيم ببيانات مشروعك الخاصة)
+        const SUPABASE_URL = 'https://gygjtvfwhdfiwcahdqyw.supabase.co/rest/v1/';
+        const SUPABASE_KEY = 'sb_publishable_TPyNp8bSFHE6xO5GGdEtbA_8_53idMv';
+        
+        let supabaseClient = null;
+        if (SUPABASE_URL !== 'ضع_رابط_مشروعك_هنا') {
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        }
 
-        let currentCurrency = 'YER';
-        let currentUser = null;
+        // بيانات افتراضية ممتازة للعرض التجريبي إذا لم يتم ربط السيرفر بعد
+        let productsData = [
+            { id: 1, title: 'عسل سدر دوعني درجة أولى', price: 25000, is_discount: true, discount_price: 21000, category_id: 1, image_url: 'https://images.unsplash.com/photo-1587049352847-4a222e784d38?q=80&w=600' },
+            { id: 2, title: 'خاتم عقيق يماني كبدي فاخر', price: 18000, is_discount: false, discount_price: 0, category_id: 2, image_url: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=600' },
+            { id: 3, title: 'بن خولاني صافي - درجة ممتازة', price: 8500, is_discount: true, discount_price: 7500, category_id: 3, image_url: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=600' },
+            { id: 4, title: 'عسل جرداني معزز بغذاء الملكات', price: 30000, is_discount: false, discount_price: 0, category_id: 1, image_url: 'https://images.unsplash.com/photo-1587049352851-8d4e89133924?q=80&w=600' }
+        ];
 
-        let appData = {
-            settings: {
-                storeName: "تراث اليمن الأصيل",
-                storeLogo: "", // رابط الصورة عند توفره
-                heroTitle: "أصالة التراث اليمني بين يديك",
-                heroDesc: "نقدم لكم أجود أنواع العسل السدري العصيمي، البن اليمني الأصيل، الجنابي الثمينة والفضيات التراثية إلى جميع الدول العربية.",
-                whatsapp: "96788119514",
-                facebook: "https://facebook.com",
-                instagram: "https://instagram.com",
-                tiktok: "https://tiktok.com"
-            },
-            categories: [
-                { id: "cat-1", name: "العسل اليمني" },
-                { id: "cat-2", name: "البن والمكسرات" },
-                { id: "cat-3", name: "الجنابي والفضيات" },
-                { id: "cat-4", name: "الملبوسات والعقيق" }
-            ],
-            products: [
-                {
-                    id: "prod-1",
-                    title: "عسل سدر عصيمي ملكي فاخر (1 كجم)",
-                    categoryId: "cat-1",
-                    priceYER: 120000,
-                    costYER: 80000,
-                    image: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?q=80&w=500",
-                    desc: "من أجود المناحل اليمنية في وادي عصيم، علاج وطعم أصيل.",
-                    isOffer: false
-                },
-                {
-                    id: "prod-2",
-                    title: "بن خولاني يمني مطحون (500 جرام)",
-                    categoryId: "cat-2",
-                    priceYER: 25000,
-                    costYER: 15000,
-                    image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?q=80&w=500",
-                    desc: "حبوب بن خولانية درجة أولى محموصة بعناية فائقة.",
-                    isOffer: true
-                },
-                {
-                    id: "prod-3",
-                    title: "جنبية صيفاني تراثية مذهبة",
-                    categoryId: "cat-3",
-                    priceYER: 450000,
-                    costYER: 300000,
-                    image: "https://images.unsplash.com/photo-1595246140625-573b715d11dc?q=80&w=500",
-                    desc: "صناعة يدوية محترفة مقبض صيفاني ونصل حديد جوهر مع حزام مذهب.",
-                    isOffer: true
-                }
-            ],
-            blog: [
-                {
-                    id: "blog-1",
-                    title: "سر شهرة العسل السدري العصيمي عالمياً",
-                    image: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?q=80&w=600",
-                    content: "يعتبر العسل السدري من أندر أنواع العسل في العالم، حيث يثبت قدرات شفائية فائقة بسبب طبيعة جبال جبال العصيمات ونباتات السدر المعمرة..."
-                }
-            ],
-            reviews: [
-                {
-                    id: "rev-1",
-                    name: "عبدالله الشمري",
-                    country: "السعودية",
-                    rating: 5,
-                    comment: "وصل العسل إلى الرياض بحالة ممتازة، الجودة عالية والتغليف راقي جداً."
-                }
-            ],
-            users: [
-                { username: "admin", pass: "admin123", role: "admin" },
-                { username: "editor", pass: "edit123", role: "editor" }
-            ],
-            sales: []
+        let categoriesData = [
+            { id: 1, name: 'عسل يمني' },
+            { id: 2, name: 'فضيات وعقيق' },
+            { id: 3, name: 'بن وقشر' }
+        ];
+
+        // رقم الواتساب الخاص بالمتجر لتلقي الطلبات
+        const STORE_PHONE = "967770000000"; 
+
+        // تحميل البيانات عند فتح الصفحة
+        window.onload = async function() {
+            if (supabaseClient) {
+                await fetchSettings();
+                await fetchCategories();
+                await fetchProducts();
+            } else {
+                renderCategories(categoriesData);
+                renderProducts(productsData);
+            }
         };
 
-        function loadStorage() {
-            const stored = localStorage.getItem('yemen_store_db');
-            if (stored) {
-                try { appData = JSON.parse(stored); } catch(e) {}
-            }
+        // جلب الإعدادات (غلاف واسم المتجر)
+        async function fetchSettings() {
+            try {
+                const { data } = await supabaseClient.from('settings').select('*');
+                if (data) {
+                    data.forEach(item => {
+                        if (item.key === 'store_title') document.getElementById('storeNameText').innerText = item.value;
+                        if (item.key === 'cover_image') document.getElementById('heroSection').style.backgroundImage = `url('${item.value}')`;
+                    });
+                }
+            } catch (e) { console.log(e); }
         }
 
-        function saveStorage() {
-            localStorage.setItem('yemen_store_db', JSON.stringify(appData));
-            renderAll();
+        // جلب الأقسام
+        async function fetchCategories() {
+            try {
+                const { data } = await supabaseClient.from('categories').select('*');
+                if (data && data.length > 0) {
+                    categoriesData = data;
+                    renderCategories(categoriesData);
+                }
+            } catch (e) { console.log(e); }
         }
 
-        window.addEventListener('DOMContentLoaded', () => {
-            loadStorage();
-            renderAll();
-        });
-
-        function renderAll() {
-            renderDynamicSettings();
-            renderCategoryFilters();
-            renderProducts();
-            renderOffers();
-            renderBlog();
-            renderReviews();
-            renderAdminTables();
+        // جلب المنتجات
+        async function fetchProducts() {
+            try {
+                const { data } = await supabaseClient.from('products').select('*');
+                if (data && data.length > 0) {
+                    productsData = data;
+                    renderProducts(productsData);
+                }
+            } catch (e) { console.log(e); }
         }
 
-        function renderDynamicSettings() {
-            document.getElementById('site-logo-text').innerText = appData.settings.storeName;
-            document.getElementById('footer-store-name').innerText = appData.settings.storeName;
-            document.getElementById('hero-title').innerText = appData.settings.heroTitle;
-            document.getElementById('hero-desc').innerText = appData.settings.heroDesc;
-
-            // Handling Logo Image vs Icon
-            const logoImg = document.getElementById('site-logo-img');
-            const logoIcon = document.getElementById('site-logo-icon');
-            if (appData.settings.storeLogo && appData.settings.storeLogo.trim() !== "") {
-                logoImg.src = appData.settings.storeLogo;
-                logoImg.classList.remove('hidden');
-                logoIcon.classList.add('hidden');
-            } else {
-                logoImg.classList.add('hidden');
-                logoIcon.classList.remove('hidden');
-            }
-
-            // Links
-            document.getElementById('link-facebook').href = appData.settings.facebook || "#";
-            document.getElementById('link-instagram').href = appData.settings.instagram || "#";
-            document.getElementById('link-tiktok').href = appData.settings.tiktok || "#";
-            
-            const waPhone = appData.settings.whatsapp;
-            const floatWaBtn = document.getElementById('floating-whatsapp');
-            
-            if (waPhone && waPhone.trim() !== '') {
-                const waUrl = `https://wa.me/${waPhone.trim()}`;
-                document.getElementById('link-whatsapp').href = waUrl;
-                floatWaBtn.href = waUrl;
-                floatWaBtn.classList.remove('hidden');
-            } else {
-                floatWaBtn.classList.add('hidden');
-            }
-
-            // Fill Form Inputs in Admin
-            document.getElementById('setting-store-name').value = appData.settings.storeName || '';
-            document.getElementById('setting-store-logo').value = appData.settings.storeLogo || '';
-            document.getElementById('setting-hero-title').value = appData.settings.heroTitle || '';
-            document.getElementById('setting-hero-desc').value = appData.settings.heroDesc || '';
-            document.getElementById('setting-whatsapp').value = appData.settings.whatsapp || '';
-            document.getElementById('setting-facebook').value = appData.settings.facebook || '';
-            document.getElementById('setting-instagram').value = appData.settings.instagram || '';
-            document.getElementById('setting-tiktok').value = appData.settings.tiktok || '';
-        }
-
-        function saveStoreSettings(e) {
-            e.preventDefault();
-            appData.settings.storeName = document.getElementById('setting-store-name').value;
-            appData.settings.storeLogo = document.getElementById('setting-store-logo').value;
-            appData.settings.heroTitle = document.getElementById('setting-hero-title').value;
-            appData.settings.heroDesc = document.getElementById('setting-hero-desc').value;
-            appData.settings.whatsapp = document.getElementById('setting-whatsapp').value;
-            appData.settings.facebook = document.getElementById('setting-facebook').value;
-            appData.settings.instagram = document.getElementById('setting-instagram').value;
-            appData.settings.tiktok = document.getElementById('setting-tiktok').value;
-
-            saveStorage();
-            alert('تم حفظ إعدادات الواجهة والشعار بنجاح!');
-        }
-
-        function formatPrice(priceYER) {
-            const rate = exchangeRates[currentCurrency] || 1;
-            const converted = (priceYER * rate).toFixed(currentCurrency === 'USD' ? 2 : 0);
-            return `${converted} ${currencySymbols[currentCurrency]}`;
-        }
-
-        function changeCurrency(val) {
-            currentCurrency = val;
-            renderProducts();
-            renderOffers();
-        }
-
-        let activeCategory = 'all';
-
-        function renderCategoryFilters() {
-            const container = document.getElementById('category-filters');
-            let html = `<button onclick="filterCategory('all')" class="px-4 py-2 rounded-full text-sm font-bold ${activeCategory === 'all' ? 'bg-yemen-gold text-yemen-dark' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'} transition">الكل</button>`;
-            
-            appData.categories.forEach(cat => {
-                html += `<button onclick="filterCategory('${cat.id}')" class="px-4 py-2 rounded-full text-sm font-bold ${activeCategory === cat.id ? 'bg-yemen-gold text-yemen-dark' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'} transition">${cat.name}</button>`;
+        // عرض الأقسام
+        function renderCategories(categories) {
+            const container = document.getElementById('categoriesContainer');
+            let html = `<button class="category-pill active" onclick="filterCategory('all', this)">الكل 🍯</button>`;
+            categories.forEach(cat => {
+                html += `<button class="category-pill" onclick="filterCategory(${cat.id}, this)">${cat.name}</button>`;
             });
             container.innerHTML = html;
         }
 
-        function filterCategory(catId) {
-            activeCategory = catId;
-            renderCategoryFilters();
-            renderProducts();
-        }
-
-        function renderProducts() {
-            const grid = document.getElementById('products-grid');
-            const filtered = activeCategory === 'all' 
-                ? appData.products 
-                : appData.products.filter(p => p.categoryId === activeCategory);
-
-            if(filtered.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-10 text-gray-500">لا توجد منتجات متوفرة في هذا التصنيف حالياً.</div>`;
+        // عرض المنتجات
+        function renderProducts(products) {
+            const grid = document.getElementById('productsGrid');
+            if (products.length === 0) {
+                grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">لا توجد منتجات حالياً.</p>`;
                 return;
             }
 
-            grid.innerHTML = filtered.map(p => `
-                <div class="bg-white rounded-lg shadow-md overflow-hidden border hover:shadow-xl transition flex flex-col justify-between">
-                    <div class="relative">
-                        <img src="${p.image}" alt="${p.title}" class="w-full h-48 object-cover">
-                        ${p.isOffer ? `<span class="absolute top-2 right-2 bg-yemen-red text-white text-xs font-bold px-2 py-1 rounded">عرض خاص</span>` : ''}
-                    </div>
-                    <div class="p-4 flex-1 flex flex-col justify-between">
-                        <div>
-                            <h3 class="font-bold text-lg mb-1">${p.title}</h3>
-                            <p class="text-gray-600 text-xs mb-3 line-clamp-2">${p.desc || ''}</p>
-                        </div>
-                        <div>
-                            <div class="text-yemen-gold font-bold text-xl mb-3">${formatPrice(p.priceYER)}</div>
-                            <a href="https://wa.me/${appData.settings.whatsapp}?text=${encodeURIComponent('السلام عليكم، يرجي تزويدي بتفاصيل الشراء للمنتج: ' + p.title)}" target="_blank" class="w-full bg-yemen-dark text-white font-bold py-2 rounded text-center block hover:bg-yemen-gold hover:text-yemen-dark transition text-sm">
-                                <i class="fa-brands fa-whatsapp"></i> طلب عبر الواتساب
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
+            grid.innerHTML = products.map(prod => {
+                const hasDiscount = prod.is_discount && prod.discount_price > 0;
+                const finalPrice = hasDiscount ? prod.discount_price : prod.price;
+                const categoryObj = categoriesData.find(c => c.id == prod.category_id);
+                const categoryName = categoryObj ? categoryObj.name : 'منتج فاخر';
 
-        function renderOffers() {
-            const grid = document.getElementById('offers-grid');
-            const offers = appData.products.filter(p => p.isOffer);
+                // تجهيز رابط الواتساب الجذاب
+                const waMessage = encodeURIComponent(`مرحباً 👋 أرغب في طلب المنتج التالي:\n📌 *${prod.title}*\n💰 السعر: ${finalPrice.toLocaleString()} ريال يمني`);
+                const waUrl = `https://wa.me/${STORE_PHONE}?text=${waMessage}`;
 
-            if(offers.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-10 text-gray-500">لا توجد عروض خاصة حالياً.</div>`;
-                return;
-            }
-
-            grid.innerHTML = offers.map(p => `
-                <div class="bg-white rounded-lg shadow-md overflow-hidden border-2 border-yemen-red flex flex-col justify-between">
-                    <img src="${p.image}" alt="${p.title}" class="w-full h-48 object-cover">
-                    <div class="p-4 flex-1 flex flex-col justify-between">
-                        <div>
-                            <span class="bg-yemen-red text-white text-xs font-bold px-2 py-0.5 rounded inline-block mb-2">خصم حصري</span>
-                            <h3 class="font-bold text-lg mb-1">${p.title}</h3>
-                            <p class="text-gray-600 text-xs mb-3">${p.desc || ''}</p>
-                        </div>
-                        <div>
-                            <div class="text-yemen-red font-bold text-xl mb-3">${formatPrice(p.priceYER)}</div>
-                            <a href="https://wa.me/${appData.settings.whatsapp}?text=${encodeURIComponent('السلام عليكم، أرغب برغبة الشراء ضمن العروض الخاصة للمنتج: ' + p.title)}" target="_blank" class="w-full bg-yemen-red text-white font-bold py-2 rounded text-center block hover:bg-red-700 transition text-sm">
-                                طلب العرض الآن
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderBlog() {
-            const grid = document.getElementById('blog-grid');
-            grid.innerHTML = appData.blog.map(b => `
-                <div class="bg-white rounded-lg shadow border overflow-hidden flex flex-col md:flex-row">
-                    <img src="${b.image}" class="w-full md:w-48 h-48 object-cover">
-                    <div class="p-4 flex flex-col justify-between">
-                        <div>
-                            <h3 class="font-bold text-lg mb-2 text-yemen-brown">${b.title}</h3>
-                            <p class="text-gray-600 text-sm mb-4 leading-relaxed">${b.content}</p>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderReviews() {
-            const grid = document.getElementById('reviews-grid');
-            grid.innerHTML = appData.reviews.map(r => `
-                <div class="bg-white p-6 rounded-lg shadow border border-gray-100">
-                    <div class="flex text-yemen-gold mb-2">
-                        ${'<i class="fa-solid fa-star"></i>'.repeat(r.rating)}
-                    </div>
-                    <p class="text-gray-700 text-sm mb-4 italic">"${r.comment}"</p>
-                    <div class="font-bold text-sm text-yemen-dark">${r.name}</div>
-                    <div class="text-xs text-gray-500">${r.country}</div>
-                </div>
-            `).join('');
-        }
-
-        function switchTab(viewName) {
-            document.querySelectorAll('.view-section').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`view-${viewName}`).classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function switchAdminTab(tabName) {
-            document.querySelectorAll('.admin-content-section').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`admin-${tabName}`).classList.remove('hidden');
-            
-            document.querySelectorAll('.admin-tab-btn').forEach(btn => {
-                btn.classList.remove('bg-yemen-gold', 'text-yemen-dark');
-                btn.classList.add('hover:bg-gray-100');
-            });
-            event.target.classList.add('bg-yemen-gold', 'text-yemen-dark');
-        }
-
-        function toggleAdminModal() {
-            if(currentUser) {
-                switchTab('admin');
-            } else {
-                document.getElementById('modal-login').classList.toggle('hidden');
-            }
-        }
-
-        function handleLogin(e) {
-            e.preventDefault();
-            const u = document.getElementById('login-username').value;
-            const p = document.getElementById('login-password').value;
-
-            const found = appData.users.find(x => x.username === u && x.pass === p);
-            if(found) {
-                currentUser = found;
-                document.getElementById('modal-login').classList.add('hidden');
-                document.getElementById('current-user-name').innerText = currentUser.username;
-                document.getElementById('current-user-role').innerText = currentUser.role === 'admin' ? 'مدير عام' : 'محرر';
-                
-                if(currentUser.role !== 'admin') {
-                    document.getElementById('tab-btn-users').classList.add('hidden');
-                } else {
-                    document.getElementById('tab-btn-users').classList.remove('hidden');
-                }
-
-                switchTab('admin');
-            } else {
-                alert('خطأ في اسم المستخدم أو كلمة المرور');
-            }
-        }
-
-        function logoutAdmin() {
-            currentUser = null;
-            switchTab('store');
-        }
-
-        function addCategory() {
-            const val = document.getElementById('new-category-name').value.trim();
-            if(!val) return;
-            const newCat = { id: 'cat-' + Date.now(), name: val };
-            appData.categories.push(newCat);
-            document.getElementById('new-category-name').value = '';
-            saveStorage();
-        }
-
-        function deleteCategory(id) {
-            if(confirm('هل أنت تأكد من حذف هذا التصنيف؟')) {
-                appData.categories = appData.categories.filter(c => c.id !== id);
-                saveStorage();
-            }
-        }
-
-        function renderAdminTables() {
-            const catTbody = document.getElementById('categories-table-body');
-            catTbody.innerHTML = appData.categories.map(c => `
-                <tr class="border-b text-sm">
-                    <td class="p-3 text-xs text-gray-500">${c.id}</td>
-                    <td class="p-3 font-bold">${c.name}</td>
-                    <td class="p-3">
-                        <button onclick="deleteCategory('${c.id}')" class="text-red-600 hover:underline text-xs">حذف</button>
-                    </td>
-                </tr>
-            `).join('');
-
-            const catSelect = document.getElementById('prod-category');
-            if(catSelect) {
-                catSelect.innerHTML = appData.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-            }
-
-            const prodTbody = document.getElementById('products-table-body');
-            prodTbody.innerHTML = appData.products.map(p => {
-                const catObj = appData.categories.find(c => c.id === p.categoryId);
                 return `
-                    <tr class="border-b text-sm">
-                        <td class="p-2"><img src="${p.image}" class="w-10 h-10 object-cover rounded"></td>
-                        <td class="p-2 font-bold">${p.title}</td>
-                        <td class="p-2 text-xs">${catObj ? catObj.name : '-'}</td>
-                        <td class="p-2 text-green-700 font-bold">${p.priceYER.toLocaleString()} YER</td>
-                        <td class="p-2 text-gray-600">${(p.costYER || 0).toLocaleString()} YER</td>
-                        <td class="p-2">${p.isOffer ? '<span class="text-red-600 font-bold">نعم</span>' : 'لا'}</td>
-                        <td class="p-2">
-                            <button onclick="openSaleModal('${p.id}')" class="bg-green-600 text-white px-2 py-1 rounded text-xs hover:bg-green-700">+ تسجيل بيع</button>
-                        </td>
-                        <td class="p-2 space-x-2 space-x-reverse">
-                            <button onclick="editProduct('${p.id}')" class="text-blue-600 hover:underline text-xs">تعديل</button>
-                            <button onclick="deleteProduct('${p.id}')" class="text-red-600 hover:underline text-xs">حذف</button>
-                        </td>
-                    </tr>
+                    <div class="product-card">
+                        <div class="card-img-wrapper">
+                            ${hasDiscount ? `<span class="badge-discount">تخفيض 🏷️</span>` : ''}
+                            <span class="badge-tag">طبيعي 100%</span>
+                            <img src="${prod.image_url || prod.image || 'https://via.placeholder.com/300'}" alt="${prod.title}">
+                        </div>
+                        <div class="card-body">
+                            <span class="product-category-name">${categoryName}</span>
+                            <h3 class="product-title">${prod.title}</h3>
+                            
+                            <div class="price-container">
+                                <span class="current-price">${finalPrice.toLocaleString()} <span class="price-currency">ر.ي</span></span>
+                                ${hasDiscount ? `<span class="old-price">${prod.price.toLocaleString()} ر.ي</span>` : ''}
+                            </div>
+
+                            <a href="${waUrl}" target="_blank" class="btn-whatsapp">
+                                <i class="fa-brands fa-whatsapp"></i> طلب مباشر عبر واتساب
+                            </a>
+                        </div>
+                    </div>
                 `;
             }).join('');
-
-            renderSalesReportTable();
-
-            const blogList = document.getElementById('admin-blog-list');
-            blogList.innerHTML = appData.blog.map(b => `
-                <div class="border p-3 rounded flex justify-between items-center">
-                    <div>
-                        <h4 class="font-bold">${b.title}</h4>
-                        <p class="text-xs text-gray-500 line-clamp-1">${b.content}</p>
-                    </div>
-                    <button onclick="deleteBlog('${b.id}')" class="text-red-600 text-xs">حذف</button>
-                </div>
-            `).join('');
-
-            const revList = document.getElementById('admin-reviews-list');
-            revList.innerHTML = appData.reviews.map(r => `
-                <div class="border p-3 rounded flex justify-between items-center">
-                    <div>
-                        <h4 class="font-bold">${r.name} (${r.country}) - ${r.rating} نجوم</h4>
-                        <p class="text-xs text-gray-600">${r.comment}</p>
-                    </div>
-                    <button onclick="deleteReview('${r.id}')" class="text-red-600 text-xs">حذف</button>
-                </div>
-            `).join('');
-
-            const usersTbody = document.getElementById('users-table-body');
-            usersTbody.innerHTML = appData.users.map((u, i) => `
-                <tr class="border-b text-sm">
-                    <td class="p-2 font-bold">${u.username}</td>
-                    <td class="p-2 text-xs">${u.role === 'admin' ? 'مدير عام' : 'محرر'}</td>
-                    <td class="p-2">
-                        ${u.username !== 'admin' ? `<button onclick="deleteUser(${i})" class="text-red-600 hover:underline text-xs">حذف</button>` : '-'}
-                    </td>
-                </tr>
-            `).join('');
         }
 
-        function openProductModal() {
-            document.getElementById('modal-product-title').innerText = "إضافة منتج جديد";
-            document.getElementById('prod-id').value = "";
-            document.getElementById('prod-title').value = "";
-            document.getElementById('prod-price').value = "";
-            document.getElementById('prod-cost').value = "";
-            document.getElementById('prod-image').value = "";
-            document.getElementById('prod-desc').value = "";
-            document.getElementById('prod-is-offer').checked = false;
-            document.getElementById('modal-product').classList.remove('hidden');
-        }
+        // فلترة المنتجات حسب القسم
+        function filterCategory(catId, btnElement) {
+            document.querySelectorAll('.category-pill').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
 
-        function closeProductModal() {
-            document.getElementById('modal-product').classList.add('hidden');
-        }
-
-        function editProduct(id) {
-            const p = appData.products.find(x => x.id === id);
-            if(!p) return;
-            document.getElementById('modal-product-title').innerText = "تعديل المنتج";
-            document.getElementById('prod-id').value = p.id;
-            document.getElementById('prod-title').value = p.title;
-            document.getElementById('prod-category').value = p.categoryId;
-            document.getElementById('prod-price').value = p.priceYER;
-            document.getElementById('prod-cost').value = p.costYER || 0;
-            document.getElementById('prod-image').value = p.image;
-            document.getElementById('prod-desc').value = p.desc || "";
-            document.getElementById('prod-is-offer').checked = p.isOffer || false;
-            document.getElementById('modal-product').classList.remove('hidden');
-        }
-
-        function saveProduct(e) {
-            e.preventDefault();
-            const id = document.getElementById('prod-id').value;
-            const newProd = {
-                id: id ? id : 'prod-' + Date.now(),
-                title: document.getElementById('prod-title').value,
-                categoryId: document.getElementById('prod-category').value,
-                priceYER: parseFloat(document.getElementById('prod-price').value),
-                costYER: parseFloat(document.getElementById('prod-cost').value),
-                image: document.getElementById('prod-image').value,
-                desc: document.getElementById('prod-desc').value,
-                isOffer: document.getElementById('prod-is-offer').checked
-            };
-
-            if(id) {
-                const idx = appData.products.findIndex(x => x.id === id);
-                appData.products[idx] = newProd;
+            if (catId === 'all') {
+                renderProducts(productsData);
             } else {
-                appData.products.push(newProd);
-            }
-
-            closeProductModal();
-            saveStorage();
-        }
-
-        function deleteProduct(id) {
-            if(confirm('هل أنت متاكد من حذف هذا المنتج؟')) {
-                appData.products = appData.products.filter(x => x.id !== id);
-                saveStorage();
+                const filtered = productsData.filter(p => p.category_id == catId);
+                renderProducts(filtered);
             }
         }
 
-        function openSaleModal(prodId) {
-            const p = appData.products.find(x => x.id === prodId);
-            if(!p) return;
-            document.getElementById('sale-prod-id').value = p.id;
-            document.getElementById('sale-prod-title').innerText = `${p.title} - السعر الحالي: ${p.priceYER.toLocaleString()} YER`;
-            document.getElementById('modal-sale').classList.remove('hidden');
+        // التحكم في النافذة المنبثقة (Modal)
+        function openAdminModal() {
+            document.getElementById('adminModal').style.display = 'flex';
         }
 
-        function closeSaleModal() {
-            document.getElementById('modal-sale').classList.add('hidden');
+        function closeAdminModal() {
+            document.getElementById('adminModal').style.display = 'none';
         }
 
-        function submitSale(e) {
+        // تسجيل دخول الادمن
+        async function handleLogin(e) {
             e.preventDefault();
-            const prodId = document.getElementById('sale-prod-id').value;
-            const qty = parseInt(document.getElementById('sale-qty').value) || 1;
-            const p = appData.products.find(x => x.id === prodId);
+            const user = document.getElementById('loginUser').value;
+            const pass = document.getElementById('loginPass').value;
 
-            if(p) {
-                const unitPrice = p.priceYER;
-                const unitCost = p.costYER || 0;
-                const totalRevenue = unitPrice * qty;
-                const totalCost = unitCost * qty;
-                const totalProfit = totalRevenue - totalCost;
-
-                const saleRecord = {
-                    id: 'sale-' + Date.now(),
-                    date: new Date().toLocaleString('ar-EG'),
-                    productTitle: p.title,
-                    qty: qty,
-                    unitPriceYER: unitPrice,
-                    unitCostYER: unitCost,
-                    totalRevenueYER: totalRevenue,
-                    totalProfitYER: totalProfit
-                };
-
-                appData.sales.push(saleRecord);
-                saveStorage();
-                closeSaleModal();
-                alert('تم تسجيل عملية البيع بنجاح لحفظ الربح والتكلفة!');
-            }
-        }
-
-        function renderSalesReportTable() {
-            const tbody = document.getElementById('sales-table-body');
-            let totalRev = 0;
-            let totalProf = 0;
-
-            if(!appData.sales || appData.sales.length === 0) {
-                tbody.innerHTML = `<tr class="border-b"><td colspan="7" class="p-4 text-center text-gray-400">لا توجد مبيعات مسجلة في السجل حالياً.</td></tr>`;
+            if (supabaseClient) {
+                const { data } = await supabaseClient.from('users').select('*').eq('username', user).eq('password', pass);
+                if (data && data.length > 0) {
+                    alert('تم تسجيل الدخول بنجاح!');
+                    document.getElementById('loginForm').style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                    document.getElementById('modalTitle').innerText = 'لوحة التحكم السريعة';
+                } else {
+                    alert('بيانات الدخول غير صحيحة!');
+                }
             } else {
-                tbody.innerHTML = appData.sales.map(s => {
-                    totalRev += s.totalRevenueYER;
-                    totalProf += s.totalProfitYER;
-                    return `
-                        <tr class="border-b text-sm">
-                            <td class="p-2 text-xs text-gray-500">${s.id}</td>
-                            <td class="p-2 text-xs">${s.date}</td>
-                            <td class="p-2 font-bold">${s.productTitle}</td>
-                            <td class="p-2">${s.qty}</td>
-                            <td class="p-2 text-green-700">${s.unitPriceYER.toLocaleString()} YER</td>
-                            <td class="p-2 text-gray-600">${s.unitCostYER.toLocaleString()} YER</td>
-                            <td class="p-2 font-bold text-yellow-800">${s.totalProfitYER.toLocaleString()} YER</td>
-                        </tr>
-                    `;
-                }).join('');
+                if (user === 'admin' && pass === 'admin123') {
+                    alert('تم الدخول كمدير تجريبي!');
+                    document.getElementById('loginForm').style.display = 'none';
+                    document.getElementById('adminPanel').style.display = 'block';
+                } else {
+                    alert('خطأ في اسم المستخدم أو كلمة المرور');
+                }
             }
-
-            document.getElementById('stat-total-sales-count').innerText = appData.sales ? appData.sales.length : 0;
-            document.getElementById('stat-total-revenue').innerText = totalRev.toLocaleString();
-            document.getElementById('stat-total-profit').innerText = totalProf.toLocaleString();
         }
 
-        function exportSalesExcel() {
-            if(!appData.sales || appData.sales.length === 0) {
-                alert('سجل المبيعات فارغ، لا توجد بيانات للتصدير حالياً.');
-                return;
-            }
-
-            const data = appData.sales.map(s => ({
-                "رقم العملية": s.id,
-                "التاريخ والوقت": s.date,
-                "اسم المنتج": s.productTitle,
-                "الكمية": s.qty,
-                "سعر البيع/وحدة (YER)": s.unitPriceYER,
-                "تكلفة وحدة وقت البيع (YER)": s.unitCostYER,
-                "إجمالي الإيراد (YER)": s.totalRevenueYER,
-                "إجمالي الربح (YER)": s.totalProfitYER
-            }));
-
-            const worksheet = XLSX.utils.json_to_sheet(data);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "تقرير المبيعات");
-            XLSX.writeFile(workbook, "تقرير_المبيعات_تراث_اليمن.xlsx");
-        }
-
-        function exportSalesPDF() {
-            if(!appData.sales || appData.sales.length === 0) {
-                alert('سجل المبيعات فارغ، لا توجد بيانات للتصدير حالياً.');
-                return;
-            }
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            doc.setFontSize(16);
-            doc.text("تقرير مبيعات وأرباح متجر تراث اليمن", 105, 15, { align: "center" });
-
-            const headers = [["الربح (YER)", "تكلفة وحدة", "سعر البيع", "الكمية", "المنتج", "التاريخ"]];
-            const rows = appData.sales.map(s => [
-                s.totalProfitYER.toLocaleString(),
-                s.unitCostYER.toLocaleString(),
-                s.unitPriceYER.toLocaleString(),
-                s.qty,
-                s.productTitle,
-                s.date
-            ]);
-
-            doc.autoTable({
-                head: headers,
-                body: rows,
-                startY: 25,
-                styles: { font: "Helvetica", halign: "center" },
-                headStyles: { fillColor: [212, 175, 55] }
-            });
-
-            doc.save("تقرير_المبيعات_تراث_اليمن.pdf");
-        }
-
-        function openBlogModal() {
-            document.getElementById('blog-id').value = "";
-            document.getElementById('blog-title').value = "";
-            document.getElementById('blog-image').value = "";
-            document.getElementById('blog-content').value = "";
-            document.getElementById('modal-blog').classList.remove('hidden');
-        }
-
-        function closeBlogModal() {
-            document.getElementById('modal-blog').classList.add('hidden');
-        }
-
-        function saveBlog(e) {
+        // إضافة منتج جديد
+        async function handleAddProduct(e) {
             e.preventDefault();
-            const newBlog = {
-                id: 'blog-' + Date.now(),
-                title: document.getElementById('blog-title').value,
-                image: document.getElementById('blog-image').value,
-                content: document.getElementById('blog-content').value
-            };
-            appData.blog.push(newBlog);
-            closeBlogModal();
-            saveStorage();
-        }
+            const title = document.getElementById('prodTitle').value;
+            const price = parseFloat(document.getElementById('prodPrice').value);
+            const image_url = document.getElementById('prodImage').value;
 
-        function deleteBlog(id) {
-            if(confirm('حذف هذا المقال؟')) {
-                appData.blog = appData.blog.filter(b => b.id !== id);
-                saveStorage();
-            }
-        }
+            const newProd = { title, price, image_url, category_id: 1 };
 
-        function openReviewModal() {
-            document.getElementById('rev-name').value = "";
-            document.getElementById('rev-country').value = "";
-            document.getElementById('rev-comment').value = "";
-            document.getElementById('modal-review').classList.remove('hidden');
-        }
-
-        function closeReviewModal() {
-            document.getElementById('modal-review').classList.add('hidden');
-        }
-
-        function saveReview(e) {
-            e.preventDefault();
-            const newRev = {
-                id: 'rev-' + Date.now(),
-                name: document.getElementById('rev-name').value,
-                country: document.getElementById('rev-country').value,
-                rating: parseInt(document.getElementById('rev-rating').value),
-                comment: document.getElementById('rev-comment').value
-            };
-            appData.reviews.push(newRev);
-            closeReviewModal();
-            saveStorage();
-        }
-
-        function deleteReview(id) {
-            if(confirm('حذف المراجعة؟')) {
-                appData.reviews = appData.reviews.filter(r => r.id !== id);
-                saveStorage();
-            }
-        }
-
-        function addUser() {
-            const name = document.getElementById('new-user-name').value.trim();
-            const pass = document.getElementById('new-user-pass').value.trim();
-            const role = document.getElementById('new-user-role').value;
-
-            if(!name || !pass) return;
-
-            appData.users.push({ username: name, pass: pass, role: role });
-            document.getElementById('new-user-name').value = "";
-            document.getElementById('new-user-pass').value = "";
-            saveStorage();
-        }
-
-        function deleteUser(idx) {
-            if(confirm('حذف هذا المستخدم؟')) {
-                appData.users.splice(idx, 1);
-                saveStorage();
+            if (supabaseClient) {
+                const { error } = await supabaseClient.from('products').insert([newProd]);
+                if (!error) {
+                    alert('تم إضافة المنتج بنجاح!');
+                    fetchProducts();
+                    closeAdminModal();
+                } else {
+                    alert('حدث خطأ: ' + error.message);
+                }
+            } else {
+                productsData.push({ ...newProd, id: Date.now() });
+                renderProducts(productsData);
+                alert('تمت الإضافة بنجاح في النسخة التجريبية!');
+                closeAdminModal();
             }
         }
     </script>
