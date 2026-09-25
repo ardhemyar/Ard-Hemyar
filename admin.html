@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="docTitle">لوحة التحكم - تسجيل الدخول</title>
+    <title id="docTitle">لوحة التحكم - إدارة المتجر</title>
 
     <!-- Supabase JS Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -87,7 +87,7 @@
     <!-- 🔒 نافذة تسجيل الدخول -->
     <div id="loginOverlay">
         <div class="login-box">
-            <h2 id="loginTitle">تسجيل الدخول للوحة التحكم</h2>
+            <h2>تسجيل الدخول للوحة التحكم</h2>
             <form onsubmit="handleLogin(event)">
                 <div class="form-group">
                     <label>اسم المستخدم</label>
@@ -294,7 +294,7 @@
             </div>
         </section>
 
-        <!-- 5. تبويب الإعدادات (خاص بالمدير Admin فقط) -->
+        <!-- 5. تبويب الإعدادات -->
         <section id="sec-settings" class="tab-content admin-only">
             <div class="card">
                 <h3>🏪 اسم المتجر</h3>
@@ -334,9 +334,31 @@
                 </div>
                 <button onclick="saveStoreSettings()" class="btn" style="margin-top: 10px;">حفظ كل الإعدادات</button>
             </div>
+
+            <!-- 🔑 قسم تغيير كلمة السر للوحة التحكم -->
+            <div class="card" style="border: 2px dashed var(--primary-color);">
+                <h3>🔑 تغيير كلمة السر الخاصة بحسابك</h3>
+                <form onsubmit="handleChangePassword(event)" style="margin-top:15px;">
+                    <div class="form-group">
+                        <label>كلمة السر الحالية *</label>
+                        <input type="password" id="currentPassword" required placeholder="أدخل كلمة السر الحالية">
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                        <div class="form-group">
+                            <label>كلمة السر الجديدة *</label>
+                            <input type="password" id="newPasswordInput" required placeholder="أدخل كلمة السر الجديدة">
+                        </div>
+                        <div class="form-group">
+                            <label>تأكيد كلمة السر الجديدة *</label>
+                            <input type="password" id="confirmPasswordInput" required placeholder="أعد إدخال كلمة السر الجديدة">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">تحديث كلمة السر</button>
+                </form>
+            </div>
         </section>
 
-        <!-- 6. تبويب إدارة المستخدمين والصلاحيات (Admin فقط) -->
+        <!-- 6. تبويب إدارة المستخدمين والصلاحيات -->
         <section id="sec-users" class="tab-content admin-only">
             <div class="card">
                 <h3>👥 إضافة مستخدم جديد للوحة التحكم</h3>
@@ -392,7 +414,6 @@
         let currentUser = null;
         let allAdminProducts = [];
 
-        // 🔐 التحقق وتسجيل الدخول
         async function handleLogin(e) {
             e.preventDefault();
             const username = document.getElementById('loginUsername').value.trim();
@@ -435,9 +456,8 @@
 
         function initDashboard() {
             document.getElementById('loginOverlay').style.display = 'none';
-            document.getElementById('userRoleBadge').innerText = `الصلاحية: ${currentUser.role.toUpperCase()}`;
+            document.getElementById('userRoleBadge').innerText = `المستخدم: ${currentUser.username} (${currentUser.role.toUpperCase()})`;
 
-            // التحكم بالعناصر المتاحة حسب الصلاحية
             if (currentUser.role !== 'admin') {
                 document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
             } else {
@@ -495,7 +515,7 @@
                     <td>${p.title} ${p.title_en ? `<br><small style="color:#888;">(${p.title_en})</small>` : ''}</td>
                     <td>${p.price}</td>
                     <td>
-                        ${canDelete ? `<button onclick="deleteProd(${p.id})" class="btn btn-danger">حذف</button>` : '<small style="color:#888;">غير مصرح بالحذف</small>'}
+                        ${canDelete ? `<button onclick="deleteProd(${p.id})" class="btn btn-danger">حذف</button>` : '<small style="color:#888;">غير مصرح</small>'}
                     </td>
                 </tr>
             `).join('');
@@ -636,7 +656,7 @@
             }
         }
 
-        // ================= 4. الإعدادات واختبار الصلاحيات =================
+        // ================= 4. الإعدادات وتغيير كلمة السر =================
         async function loadStoreSettings() {
             const { data } = await db.from('store_settings').select('*').single();
             if (data) {
@@ -650,7 +670,7 @@
 
         async function saveStoreSettings() {
             if (currentUser.role !== 'admin') {
-                alert('عذراً، تقتصر الصلاحية على حساب المدير الرئيسي فقط.');
+                alert('عذراً، تقتصر الصلاحية على المدير الرئيسي فقط.');
                 return;
             }
             const store_name = document.getElementById('setStoreName').value;
@@ -661,6 +681,40 @@
 
             const { error } = await db.from('store_settings').upsert({ id: 1, store_name, whatsapp_number, rate_sar, rate_usd, rate_jod });
             if (!error) alert('تم حفظ الإعدادات بنجاح!');
+        }
+
+        // 🔑 دالة تحديث كلمة المرور للحساب الحالي
+        async function handleChangePassword(e) {
+            e.preventDefault();
+            const currentPass = document.getElementById('currentPassword').value.trim();
+            const newPass = document.getElementById('newPasswordInput').value.trim();
+            const confirmPass = document.getElementById('confirmPasswordInput').value.trim();
+
+            if (currentPass !== currentUser.password_hash) {
+                alert('كلمة السر الحالية غير صحيحة!');
+                return;
+            }
+
+            if (newPass !== confirmPass) {
+                alert('كلمة السر الجديدة وتأكيدها غير متطابقتين!');
+                return;
+            }
+
+            if (newPass.length < 4) {
+                alert('كلمة السر قصيرة جداً، يجب أن تكون 4 أرقام/حروف على الأقل.');
+                return;
+            }
+
+            const { error } = await db.from('users')
+                .update({ password_hash: newPass })
+                .eq('id', currentUser.id);
+
+            if (!error) {
+                alert('تم تحديث كلمة السر بنجاح! يرجى إعادة تسجيل الدخول.');
+                handleLogout();
+            } else {
+                alert('حدث خطأ أثناء التحديث: ' + error.message);
+            }
         }
 
         // ================= 5. إدارة المستخدمين =================
