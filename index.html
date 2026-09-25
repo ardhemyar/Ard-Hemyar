@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="htmlTag">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="siteTitle">متجرنا | أصالة وجودة المنتجات</title>
+    <title id="siteTitle">المتجر | أصالة وجودة المنتجات</title>
 
     <!-- Supabase JS Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -39,105 +39,181 @@
         .navbar {
             max-width: 1200px; margin: 0 auto;
             display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 20px;
+            padding: 12px 20px; flex-wrap: wrap; gap: 15px;
         }
 
         .brand-logo {
-            font-size: 1.6rem; font-weight: 800; color: var(--primary);
-            text-decoration: none; display: flex; align-items: center; gap: 10px;
+            font-size: 1.5rem; font-weight: 800; color: var(--primary);
+            text-decoration: none; display: flex; align-items: center; gap: 8px;
         }
 
-        .nav-links { display: flex; gap: 25px; list-style: none; }
+        .nav-links { display: flex; gap: 20px; list-style: none; align-items: center; }
         .nav-links a { color: #e5dec9; text-decoration: none; font-weight: 500; transition: var(--transition); }
         .nav-links a:hover { color: var(--primary); }
+
+        .header-controls { display: flex; align-items: center; gap: 10px; }
+        .control-select {
+            background-color: rgba(255, 255, 255, 0.1); color: #fff;
+            border: 1px solid var(--primary); padding: 6px 12px; border-radius: 20px;
+            font-size: 0.85rem; cursor: pointer; outline: none; transition: var(--transition);
+        }
+        .control-select option { background-color: var(--dark); color: #fff; }
 
         .hero {
             background: linear-gradient(rgba(31, 25, 21, 0.82), rgba(31, 25, 21, 0.85)), 
                         url('https://images.unsplash.com/photo-1587049352847-4a222e784d38?q=80&w=1600') center/cover no-repeat;
-            color: var(--white); text-align: center; padding: 100px 20px 80px;
+            color: var(--white); text-align: center; padding: 80px 20px 60px;
         }
 
-        .hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 15px; color: var(--primary); }
-        .hero p { font-size: 1.25rem; max-width: 650px; margin: 0 auto 30px; color: #d1c7b7; }
+        .hero h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 15px; color: var(--primary); }
+        .hero p { font-size: 1.2rem; max-width: 650px; margin: 0 auto 30px; color: #d1c7b7; }
 
-        .btn-hero {
-            background-color: var(--primary); color: var(--dark); padding: 14px 35px;
-            font-size: 1.1rem; font-weight: 700; border-radius: 30px; text-decoration: none;
-            display: inline-block; transition: var(--transition);
-            box-shadow: 0 4px 15px rgba(197, 155, 39, 0.4);
-        }
-        .btn-hero:hover { background-color: #e6b830; transform: translateY(-3px); }
-
-        .container { max-width: 1200px; margin: 0 auto; padding: 60px 20px; }
-        .section-title { text-align: center; margin-bottom: 40px; }
-        .section-title h2 { font-size: 2.2rem; color: var(--dark); position: relative; display: inline-block; padding-bottom: 10px; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .section-title { text-align: center; margin-bottom: 30px; }
+        .section-title h2 { font-size: 2rem; color: var(--dark); position: relative; display: inline-block; padding-bottom: 10px; }
         .section-title h2::after {
             content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
             width: 60px; height: 3px; background-color: var(--primary); border-radius: 2px;
         }
 
-        .categories-filter { display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-bottom: 40px; }
+        /* 🔍 أدوات البحث والفلترة المتقدمة */
+        .filter-bar-wrapper {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            margin-bottom: 35px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            border: 1px solid #f0eae1;
+        }
+
+        .search-row {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .search-input-box {
+            flex: 2;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-input-box input {
+            width: 100%;
+            padding: 12px 40px 12px 15px;
+            border: 1px solid #e2dad1;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: var(--transition);
+        }
+
+        html[dir="ltr"] .search-input-box input {
+            padding: 12px 15px 12px 40px;
+        }
+
+        .search-input-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(197, 155, 39, 0.15);
+        }
+
+        .search-icon {
+            position: absolute;
+            top: 50%;
+            right: 15px;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        html[dir="ltr"] .search-icon {
+            right: auto;
+            left: 15px;
+        }
+
+        .sort-select-box {
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .sort-select-box select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e2dad1;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            outline: none;
+            background: var(--white);
+            cursor: pointer;
+        }
+
+        .categories-filter { display: flex; flex-wrap: wrap; gap: 8px; }
         .filter-btn {
-            background-color: var(--white); border: 1px solid #e2dad1; padding: 10px 22px;
-            border-radius: 25px; cursor: pointer; font-size: 0.95rem; font-weight: 600;
+            background-color: var(--light-bg); border: 1px solid #e2dad1; padding: 8px 18px;
+            border-radius: 20px; cursor: pointer; font-size: 0.88rem; font-weight: 600;
             color: var(--text-main); transition: var(--transition);
         }
         .filter-btn:hover, .filter-btn.active { background-color: var(--primary); color: var(--dark); border-color: var(--primary); }
 
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 30px; }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
         .product-card {
             background: var(--white); border-radius: 16px; overflow: hidden;
             box-shadow: var(--shadow); transition: var(--transition); display: flex;
             flex-direction: column; border: 1px solid #f0eae1;
         }
-        .product-card:hover { transform: translateY(-8px); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12); }
-        .product-img-wrapper { position: relative; width: 100%; height: 230px; overflow: hidden; background-color: #f9f6f0; }
+        .product-card:hover { transform: translateY(-6px); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12); }
+        .product-img-wrapper { position: relative; width: 100%; height: 220px; overflow: hidden; background-color: #f9f6f0; }
         .product-img { width: 100%; height: 100%; object-fit: cover; transition: var(--transition); }
         .product-card:hover .product-img { transform: scale(1.06); }
-        .product-info { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
-        .product-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 5px; color: var(--dark); }
-        .product-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px; }
-        .product-footer { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 15px; border-top: 1px dashed #eee; }
-        .product-price { font-size: 1.25rem; font-weight: 800; color: var(--primary-dark); }
+        .product-info { padding: 18px; display: flex; flex-direction: column; flex-grow: 1; }
+        .product-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 5px; color: var(--dark); }
+        .product-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px; }
+        .product-footer { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px dashed #eee; }
+        .product-price { font-size: 1.2rem; font-weight: 800; color: var(--primary-dark); }
         .btn-order-wa {
-            background-color: #25d366; color: #fff; padding: 8px 16px; border-radius: 8px;
-            text-decoration: none; font-size: 0.9rem; font-weight: 700; display: flex;
-            align-items: center; gap: 6px; transition: var(--transition);
+            background-color: #25d366; color: #fff; padding: 8px 14px; border-radius: 8px;
+            text-decoration: none; font-size: 0.85rem; font-weight: 700; display: flex;
+            align-items: center; gap: 5px; transition: var(--transition);
         }
         .btn-order-wa:hover { background-color: #1eb956; }
 
-        .blog-section { background-color: #f3efe6; padding: 70px 20px; }
-        .blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
+        .blog-section { background-color: #f3efe6; padding: 60px 20px; }
+        .blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto; }
         .blog-card { background: var(--white); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); transition: var(--transition); }
         .blog-card:hover { transform: translateY(-5px); }
-        .blog-img { width: 100%; height: 200px; object-fit: cover; }
-        .blog-body { padding: 22px; }
+        .blog-img { width: 100%; height: 190px; object-fit: cover; }
+        .blog-body { padding: 20px; }
         .blog-date { font-size: 0.8rem; color: var(--primary-dark); font-weight: 700; margin-bottom: 8px; }
-        .blog-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; color: var(--dark); }
-        .blog-excerpt { font-size: 0.92rem; color: var(--text-muted); line-height: 1.5; }
+        .blog-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 10px; color: var(--dark); }
+        .blog-excerpt { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
 
         .floating-wa {
             position: fixed; bottom: 25px; left: 25px; background-color: #25d366; color: white;
-            width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center;
+            width: 58px; height: 58px; border-radius: 50%; display: flex; justify-content: center;
             align-items: center; box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4); z-index: 999;
             text-decoration: none; transition: var(--transition);
         }
+        html[dir="ltr"] .floating-wa { left: auto; right: 25px; }
         .floating-wa:hover { transform: scale(1.1); }
-        .floating-wa svg { width: 32px; height: 32px; fill: white; }
+        .floating-wa svg { width: 30px; height: 30px; fill: white; }
 
-        footer { background-color: var(--dark); color: #d1c7b7; padding: 50px 20px 20px; text-align: center; }
-        .social-icons { display: flex; justify-content: center; gap: 15px; margin: 20px 0; }
+        footer { background-color: var(--dark); color: #d1c7b7; padding: 40px 20px 20px; text-align: center; }
+        .social-icons { display: flex; justify-content: center; gap: 12px; margin: 18px 0; }
         .social-btn {
-            color: var(--white); background: rgba(255, 255, 255, 0.08); width: 40px; height: 40px;
+            color: var(--white); background: rgba(255, 255, 255, 0.08); width: 38px; height: 38px;
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
             text-decoration: none; transition: var(--transition);
         }
         .social-btn:hover { background: var(--primary); color: var(--dark); }
 
         @media (max-width: 768px) {
-            .hero h1 { font-size: 2.2rem; }
+            .navbar { justify-content: center; }
+            .hero h1 { font-size: 2rem; }
             .nav-links { display: none; }
-            .container { padding: 40px 15px; }
+            .search-row { flex-direction: column; }
         }
     </style>
 </head>
@@ -146,42 +222,85 @@
     <!-- الشريط العلوي -->
     <header>
         <div class="navbar">
-            <a href="#" class="brand-logo" id="navBrand">🍯 أرض حمير</a>
+            <a href="#" class="brand-logo" id="navBrand">🍯 المتجر</a>
+            
             <ul class="nav-links">
-                <li><a href="#products">المنتجات</a></li>
-                <li><a href="#blog">المدونة</a></li>
-                <li><a href="#contact">تواصل معنا</a></li>
+                <li><a href="#products" class="i18n-nav-products">المنتجات</a></li>
+                <li><a href="#blog" class="i18n-nav-blog">المدونة</a></li>
+                <li><a href="#contact" class="i18n-nav-contact">تواصل معنا</a></li>
             </ul>
+
+            <div class="header-controls">
+                <select class="control-select" id="currencySelect" onchange="changeCurrency(this.value)">
+                    <option value="YER">🇾🇪 ر.ي</option>
+                    <option value="SAR">🇸🇦 SAR</option>
+                    <option value="USD">🇺🇸 USD</option>
+                    <option value="JOD">🇯🇴 JOD</option>
+                </select>
+
+                <select class="control-select" id="langSelect" onchange="changeLanguage(this.value)">
+                    <option value="ar">العربية 🇸🇦</option>
+                    <option value="en">English 🇬🇧</option>
+                </select>
+            </div>
         </div>
     </header>
 
     <!-- قسم الهيرو -->
     <section class="hero">
-        <h1 id="heroTitle">أرض حمير لخيرات اليمن الطبيعية</h1>
-        <p>نقدم لكم أجود أنواع العسل اليمني الطبيعي والمنتجات الأصيلة مباشرة من مناحلنا ومزارعنا إليكم.</p>
-        <a href="#products" class="btn-hero">تصفح المنتجات الآن</a>
+        <h1 id="heroTitle">متجرنا لخيرات الطبيعة</h1>
+        <p id="heroDesc">نقدم لكم أجود أنواع المنتجات الأصيلة مباشرة إليكم.</p>
     </section>
 
-    <!-- قسم المنتجات -->
+    <!-- قسم المنتجات وبلاطة البحث والفلترة -->
     <main class="container" id="products">
         <div class="section-title">
-            <h2>منتجاتنا المميزة</h2>
+            <h2 id="secTitleProducts">منتجاتنا المميزة</h2>
         </div>
 
-        <div class="categories-filter" id="categoriesContainer">
-            <button class="filter-btn active" onclick="filterCategory(null, this)">الكل</button>
+        <!-- 🔍 لوحة البحث والفلترة بالكامل -->
+        <div class="filter-bar-wrapper">
+            <div class="search-row">
+                <!-- شريط البحث بالاسم -->
+                <div class="search-input-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="prodSearchInput" oninput="applyFilters()" placeholder="ابحث باسم المنتج (عربي أو إنجليزي)...">
+                </div>
+
+                <!-- خيارات الترتيب والفرز حسب السعر -->
+                <div class="sort-select-box">
+                    <select id="prodSortSelect" onchange="applyFilters()">
+                        <option value="default">الترتيب الافتراضي</option>
+                        <option value="price-low">السعر: من الأقل للأعلى</option>
+                        <option value="price-high">السعر: من الأعلى للأقل</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- أزرار الأقسام والفلترة المباشرة -->
+            <div class="categories-filter" id="categoriesContainer">
+                <button class="filter-btn active" onclick="filterCategory(null, this)">الكل</button>
+            </div>
         </div>
 
+        <!-- شبكة عرض المنتجات -->
         <div class="products-grid" id="productsGrid">
             <p style="text-align: center; grid-column: 1/-1;">جاري تحميل المنتجات...</p>
         </div>
     </main>
 
-    <!-- قسم المدونة -->
+    <!-- قسم المدونة ومربع البحث بالأخبار -->
     <section class="blog-section" id="blog">
         <div class="section-title">
-            <h2>المدونة والأخبار</h2>
+            <h2 id="secTitleBlog">المدونة والأخبار</h2>
         </div>
+
+        <!-- شريط بحث المقالات -->
+        <div style="max-width: 500px; margin: 0 auto 30px;" class="search-input-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="blogSearchInput" oninput="renderBlog()" placeholder="ابحث في المقالات والأخبار...">
+        </div>
+
         <div class="blog-grid" id="blogGrid">
             <p style="text-align: center; grid-column: 1/-1;">جاري تحميل المقالات...</p>
         </div>
@@ -196,12 +315,10 @@
 
     <!-- الفوتر -->
     <footer id="contact">
-        <h3 style="color: var(--primary);" id="footerTitle">متجر أرض حمير</h3>
-        <p style="margin-top: 8px; font-size: 0.9rem;">جودة وأصالة المنتجات الطبيعية بين يديك.</p>
-        
+        <h3 style="color: var(--primary);" id="footerTitle">المتجر</h3>
+        <p style="margin-top: 8px; font-size: 0.9rem;" id="footerDesc">جودة وأصالة المنتجات بين يديك.</p>
         <div class="social-icons" id="socialContainer"></div>
-
-        <p style="font-size: 0.8rem; margin-top: 20px; color: #888;" id="footerCopyright">&copy; 2026 جميع الحقوق محفوظة لـ متجر أرض حمير.</p>
+        <p style="font-size: 0.8rem; margin-top: 20px; color: #888;" id="footerCopyright">&copy; 2026 جميع الحقوق محفوظة.</p>
     </footer>
 
     <script>
@@ -210,77 +327,142 @@
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let activeWhatsappNumber = '';
+        let rawProductsData = [];
+        let rawBlogData = [];
+        let currentSelectedCategory = null;
+        let currentLang = 'ar';
+        let currentCurrency = 'YER';
 
-        // جلب الإعدادات واسم المتجر ديناميكياً
+        let rates = { YER: 1, SAR: 1, USD: 1, JOD: 1 };
+
+        const storeTranslations = {
+            ar: {
+                navProducts: "المنتجات", navBlog: "المدونة", navContact: "تواصل معنا",
+                heroDesc: "نقدم لكم أجود أنواع المنتجات الأصيلة مباشرة إليكم.",
+                secProducts: "منتجاتنا المميزة", secBlog: "المدونة والأخبار",
+                orderWa: "طلب عبر واتساب", footerDesc: "جودة وأصالة المنتجات الطبيعية بين يديك.",
+                allCat: "الكل"
+            },
+            en: {
+                navProducts: "Products", navBlog: "Blog", navContact: "Contact Us",
+                heroDesc: "Offering you the finest natural products directly to your doorstep.",
+                secProducts: "Featured Products", secBlog: "Blog & News",
+                orderWa: "Order via WhatsApp", footerDesc: "Quality and authenticity of natural products in your hands.",
+                allCat: "All"
+            }
+        };
+
         async function loadSettings() {
             try {
                 const { data } = await db.from('store_settings').select('*').limit(1).single();
                 if (data) {
                     if (data.store_name) {
                         const name = data.store_name;
-                        document.getElementById('siteTitle').innerText = `${name} | أصالة وجودة المنتجات الطبيعية`;
+                        document.getElementById('siteTitle').innerText = name;
                         document.getElementById('navBrand').innerText = `🍯 ${name}`;
-                        document.getElementById('heroTitle').innerText = `${name} لخيرات الطبيعة`;
-                        document.getElementById('footerTitle').innerText = `متجر ${name}`;
-                        document.getElementById('footerCopyright').innerHTML = `&copy; 2026 جميع الحقوق محفوظة لـ متجر ${name}.`;
+                        document.getElementById('heroTitle').innerText = name;
+                        document.getElementById('footerTitle').innerText = name;
                     }
-
                     if (data.whatsapp_number) {
                         activeWhatsappNumber = data.whatsapp_number.replace(/[^0-9]/g, '');
                         document.getElementById('floatingWhatsapp').href = `https://wa.me/${activeWhatsappNumber}`;
                     }
+                    rates.SAR = data.rate_sar || 1;
+                    rates.USD = data.rate_usd || 1;
+                    rates.JOD = data.rate_jod || 1;
                 }
-            } catch (err) {
-                console.log('ملاحظة حول الإعدادات:', err);
-            }
+            } catch (err) { console.log(err); }
+        }
+
+        function changeLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('htmlTag').dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.getElementById('htmlTag').lang = lang;
+
+            const t = storeTranslations[lang];
+            document.querySelector('.i18n-nav-products').innerText = t.navProducts;
+            document.querySelector('.i18n-nav-blog').innerText = t.navBlog;
+            document.querySelector('.i18n-nav-contact').innerText = t.navContact;
+            document.getElementById('heroDesc').innerText = t.heroDesc;
+            document.getElementById('secTitleProducts').innerText = t.secProducts;
+            document.getElementById('secTitleBlog').innerText = t.secBlog;
+            document.getElementById('footerDesc').innerText = t.footerDesc;
+
+            applyFilters();
+            renderBlog();
+        }
+
+        function changeCurrency(curr) {
+            currentCurrency = curr;
+            applyFilters();
         }
 
         async function loadCategories() {
             const { data } = await db.from('categories').select('*').order('id', { ascending: true });
             const container = document.getElementById('categoriesContainer');
-            
             if (data && data.length > 0) {
-                const catHtml = data.map(c => 
-                    `<button class="filter-btn" onclick="filterCategory(${c.id}, this)">${c.name}</button>`
-                ).join('');
-                container.innerHTML = `<button class="filter-btn active" onclick="filterCategory(null, this)">الكل</button>` + catHtml;
+                const catHtml = data.map(c => `<button class="filter-btn" onclick="filterCategory(${c.id}, this)">${c.name}</button>`).join('');
+                container.innerHTML = `<button class="filter-btn active" onclick="filterCategory(null, this)">${storeTranslations[currentLang].allCat}</button>` + catHtml;
             }
         }
 
-        async function loadProducts(categoryId = null) {
-            const grid = document.getElementById('productsGrid');
-            grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">جاري التحميل...</p>';
+        async function loadProducts() {
+            const { data } = await db.from('products').select('*').order('id', { ascending: false });
+            rawProductsData = data || [];
+            applyFilters();
+        }
 
-            let query = db.from('products').select('*').order('id', { ascending: false });
-            if (categoryId) {
-                query = query.eq('category_id', categoryId);
+        // 🧠 إمكانية البحث والفلترة المعقدة لجميع المنتجات
+        function applyFilters() {
+            const searchQuery = document.getElementById('prodSearchInput').value.toLowerCase().trim();
+            const sortVal = document.getElementById('prodSortSelect').value;
+
+            let filtered = rawProductsData.filter(p => {
+                const matchCat = currentSelectedCategory === null || p.category_id === currentSelectedCategory;
+                const matchSearch = !searchQuery || 
+                    (p.title && p.title.toLowerCase().includes(searchQuery)) ||
+                    (p.title_en && p.title_en.toLowerCase().includes(searchQuery));
+                return matchCat && matchSearch;
+            });
+
+            // الترتيب حسب السعر
+            if (sortVal === 'price-low') {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (sortVal === 'price-high') {
+                filtered.sort((a, b) => b.price - a.price);
             }
 
-            const { data, error } = await query;
+            renderProducts(filtered);
+        }
 
-            if (error || !data || data.length === 0) {
-                grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #888;">لا توجد منتجات متاحة حالياً في هذا القسم.</p>';
+        function renderProducts(productsList) {
+            const grid = document.getElementById('productsGrid');
+
+            if (productsList.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #888;">لم يتم العثور على أي منتج يطابق عملية البحث.</p>';
                 return;
             }
 
-            grid.innerHTML = data.map(p => {
-                const waMessage = encodeURIComponent(`مرحباً، أود الإستفسار عن منتج: ${p.title}`);
-                const waLink = activeWhatsappNumber 
-                    ? `https://wa.me/${activeWhatsappNumber}?text=${waMessage}` 
-                    : '#';
+            const rate = rates[currentCurrency] || 1;
+
+            grid.innerHTML = productsList.map(p => {
+                const convertedPrice = (p.price * rate).toFixed(currentCurrency === 'YER' ? 0 : 2);
+                const title = currentLang === 'en' && p.title_en ? p.title_en : p.title;
+                const waMessage = encodeURIComponent(`مرحباً، أود الإستفسار عن منتج: ${title}`);
+                const waLink = activeWhatsappNumber ? `https://wa.me/${activeWhatsappNumber}?text=${waMessage}` : '#';
 
                 return `
                     <div class="product-card">
                         <div class="product-img-wrapper">
-                            <img src="${p.image || 'https://via.placeholder.com/300'}" class="product-img" alt="${p.title}">
+                            <img src="${p.image || 'https://via.placeholder.com/300'}" class="product-img" alt="${title}">
                         </div>
                         <div class="product-info">
-                            <div class="product-title">${p.title}</div>
-                            ${p.title_en ? `<div class="product-subtitle">${p.title_en}</div>` : ''}
+                            <div class="product-title">${title}</div>
+                            ${currentLang === 'ar' && p.title_en ? `<div class="product-subtitle">${p.title_en}</div>` : ''}
                             <div class="product-footer">
-                                <div class="product-price">${p.price} <small style="font-size: 0.75rem;">ر.ي</small></div>
+                                <div class="product-price">${convertedPrice} <small style="font-size: 0.75rem;">${currentCurrency}</small></div>
                                 <a href="${waLink}" target="_blank" class="btn-order-wa">
-                                    طلب عبر واتساب
+                                    ${storeTranslations[currentLang].orderWa}
                                 </a>
                             </div>
                         </div>
@@ -290,22 +472,35 @@
         }
 
         function filterCategory(catId, btnElement) {
+            currentSelectedCategory = catId;
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btnElement.classList.add('active');
-            loadProducts(catId);
+            applyFilters();
         }
 
         async function loadBlog() {
-            const blogGrid = document.getElementById('blogGrid');
-            const { data, error } = await db.from('blog_posts').select('*').order('id', { ascending: false });
+            const { data } = await db.from('blog_posts').select('*').order('id', { ascending: false });
+            rawBlogData = data || [];
+            renderBlog();
+        }
 
-            if (error || !data || data.length === 0) {
-                blogGrid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #888;">لا توجد مقالات منشورة حالياً.</p>';
+        function renderBlog() {
+            const blogGrid = document.getElementById('blogGrid');
+            const blogSearch = document.getElementById('blogSearchInput').value.toLowerCase().trim();
+
+            const filteredBlog = rawBlogData.filter(b => {
+                return !blogSearch || 
+                    (b.title && b.title.toLowerCase().includes(blogSearch)) ||
+                    (b.content && b.content.toLowerCase().includes(blogSearch));
+            });
+
+            if (filteredBlog.length === 0) {
+                blogGrid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #888;">لا توجد مقالات تطابق البحث.</p>';
                 return;
             }
 
-            blogGrid.innerHTML = data.map(b => {
-                const pubDate = new Date(b.created_at).toLocaleDateString('ar-YE', { year: 'numeric', month: 'long', day: 'numeric' });
+            blogGrid.innerHTML = filteredBlog.map(b => {
+                const pubDate = new Date(b.created_at).toLocaleDateString(currentLang === 'ar' ? 'ar-YE' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' });
                 return `
                     <article class="blog-card">
                         <img src="${b.cover_image || 'https://via.placeholder.com/400x200'}" class="blog-img" alt="${b.title}">
@@ -322,11 +517,8 @@
         async function loadSocialLinks() {
             const container = document.getElementById('socialContainer');
             const { data } = await db.from('social_links').select('*').eq('is_active', true);
-
             if (data && data.length > 0) {
-                container.innerHTML = data.map(s => `
-                    <a href="${s.url}" target="_blank" class="social-btn" title="${s.platform_name}">🌐</a>
-                `).join('');
+                container.innerHTML = data.map(s => `<a href="${s.url}" target="_blank" class="social-btn" title="${s.platform_name}">🌐</a>`).join('');
             }
         }
 
