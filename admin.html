@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - أرض حمير</title>
+
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --primary-color: #b8860b;
+            --bg-dark: #1e1e2d;
+            --bg-light: #f4f6f9;
+            --text-dark: #333;
+            --sidebar-width: 250px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+        body { display: flex; background-color: var(--bg-light); color: var(--text-dark); min-height: 100vh; }
+
+        /* الشريط الجانبي */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--bg-dark);
+            color: #fff;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+        }
+        .sidebar h2 { text-align: center; margin-bottom: 30px; font-size: 1.2rem; color: var(--primary-color); }
+        .sidebar nav a {
+            display: block;
+            padding: 12px 25px;
+            color: #a2a3b7;
+            text-decoration: none;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+        .sidebar nav a:hover, .sidebar nav a.active {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border-right: 4px solid var(--primary-color);
+        }
+
+        /* المحتوى الرئيسي */
+        .main-content {
+            margin-right: var(--sidebar-width);
+            flex: 1;
+            padding: 30px;
+        }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .card { background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 25px; }
+
+        /* التبويبات */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* النماذج والجداول */
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
+        }
+        .btn {
+            background-color: var(--primary-color); color: #fff; border: none;
+            padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 1rem;
+        }
+        .btn-danger { background-color: #dc3545; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        table th, table td { padding: 12px; border-bottom: 1px solid #eee; text-align: right; }
+        table th { background-color: #f8f9fa; }
+        .img-thumb { width: 45px; height: 45px; object-fit: cover; border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <!-- الشريط الجانبي -->
+    <aside class="sidebar">
+        <h2>أرض حمير | الإدارة</h2>
+        <nav>
+            <a onclick="switchTab('products')" class="active" id="tab-products">📦 إدارة المنتجات</a>
+            <a onclick="switchTab('categories')" id="tab-categories">🏷️ إدارة الأقسام</a>
+            <a onclick="switchTab('social')" id="tab-social">🌐 السوشال ميديا</a>
+            <a onclick="switchTab('blog')" id="tab-blog">📝 إدارة المدونة</a>
+            <a onclick="switchTab('settings')" id="tab-settings">⚙️ إعدادات المتجر</a>
+        </nav>
+    </aside>
+
+    <!-- منطقة المحتوى الرئيسي -->
+    <main class="main-content">
+
+        <!-- تبويب المنتجات -->
+        <section id="sec-products" class="tab-content active">
+            <div class="header">
+                <h1>إدارة المنتجات</h1>
+            </div>
+            
+            <div class="card">
+                <h3>إضافة منتج جديد</h3>
+                <form id="formAddProduct" onsubmit="handleAddProduct(event)" style="margin-top:15px;">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                        <div class="form-group">
+                            <label>اسم المنتج</label>
+                            <input type="text" id="pTitle" required placeholder="مثال: عسل دوعني سدر">
+                        </div>
+                        <div class="form-group">
+                            <label>السعر (ر.ي)</label>
+                            <input type="number" id="pPrice" required placeholder="15000">
+                        </div>
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                        <div class="form-group">
+                            <label>رابط الصورة</label>
+                            <input type="url" id="pImage" required placeholder="https://...">
+                        </div>
+                        <div class="form-group">
+                            <label>القسم</label>
+                            <select id="pCategory"><option value="1">عام</option></select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">حفظ المنتج</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>قائمة المنتجات المتاحة</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الصورة</th>
+                            <th>الاسم</th>
+                            <th>السعر</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblProducts">
+                        <tr><td colspan="4">جاري التحميل...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- باقي التبويبات (تتوسع بنفس الهيكلية) -->
+        <section id="sec-categories" class="tab-content">
+            <h1>إدارة الأقسام</h1>
+            <div class="card" style="margin-top:15px;"><p>قسم إدارة الأقسام قيد التطوير...</p></div>
+        </section>
+
+        <section id="sec-social" class="tab-content">
+            <h1>روابط السوشال ميديا</h1>
+            <div class="card" style="margin-top:15px;"><p>قسم إدارة التواصل الاجتماعي قيد التطوير...</p></div>
+        </section>
+
+        <section id="sec-blog" class="tab-content">
+            <h1>إدارة المقالات والمدونة</h1>
+            <div class="card" style="margin-top:15px;"><p>قسم إدارة المدونة قيد التطوير...</p></div>
+        </section>
+
+        <section id="sec-settings" class="tab-content">
+            <h1>إعدادات المتجر العامة</h1>
+            <div class="card" style="margin-top:15px;"><p>إعدادات الحساب وكلمة المرور ورقم الواتساب...</p></div>
+        </section>
+
+    </main>
+
+    <script>
+        // إعدادات الربط مع Supabase
+        const SUPABASE_URL = 'https://gygjtvfwhdfiwcahdqyw.supabase.co';
+        const SUPABASE_KEY = 'ضع_المفتاح_الخاص_بالمشروع_هنا';
+        const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // التنقل بين التبويبات
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.sidebar nav a').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('sec-' + tabName).classList.add('active');
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+
+        // جلب المنتجات
+        async function fetchProducts() {
+            const { data, error } = await db.from('products').select('*').order('id', { ascending: false });
+            const tbody = document.getElementById('tblProducts');
+            
+            if (error || !data) {
+                tbody.innerHTML = '<tr><td colspan="4">حدث خطأ في تحميل المنتجات.</td></tr>';
+                return;
+            }
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4">لا توجد منتجات مسجلة.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.map(p => `
+                <tr>
+                    <td><img src="${p.image}" class="img-thumb" alt=""></td>
+                    <td>${p.title}</td>
+                    <td>${p.price} ر.ي</td>
+                    <td>
+                        <button onclick="deleteProd(${p.id})" class="btn btn-danger">حذف</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // إضافة منتج
+        async function handleAddProduct(e) {
+            e.preventDefault();
+            const title = document.getElementById('pTitle').value;
+            const price = parseFloat(document.getElementById('pPrice').value);
+            const image = document.getElementById('pImage').value;
+
+            const { error } = await db.from('products').insert([{ title, price, image }]);
+            if (!error) {
+                alert('تمت إضافة المنتج بنجاح');
+                document.getElementById('formAddProduct').reset();
+                fetchProducts();
+            } else {
+                alert('خطأ: ' + error.message);
+            }
+        }
+
+        // حذف منتج
+        async function deleteProd(id) {
+            if (confirm('هل أنت تأكد من الحذف؟')) {
+                const { error } = await db.from('products').delete().eq('id', id);
+                if (!error) {
+                    fetchProducts();
+                } else {
+                    alert('خطأ أثناء الحذف: ' + error.message);
+                }
+            }
+        }
+
+        // البدء عند فتح الصفحة
+        fetchProducts();
+    </script>
+</body>
+</html>
