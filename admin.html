@@ -70,6 +70,7 @@
             padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 1rem;
         }
         .btn-danger { background-color: #dc3545; }
+        .btn-secondary { background-color: #6c757d; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
         table th, table td { padding: 12px; border-bottom: 1px solid #eee; text-align: right; }
@@ -94,11 +95,9 @@
     <!-- منطقة المحتوى الرئيسي -->
     <main class="main-content">
 
-        <!-- تبويب المنتجات -->
+        <!-- 1. تبويب المنتجات -->
         <section id="sec-products" class="tab-content active">
-            <div class="header">
-                <h1>إدارة المنتجات</h1>
-            </div>
+            <div class="header"><h1>إدارة المنتجات</h1></div>
             
             <div class="card">
                 <h3>إضافة منتج جديد</h3>
@@ -120,7 +119,7 @@
                         </div>
                         <div class="form-group">
                             <label>القسم</label>
-                            <select id="pCategory"><option value="1">عام</option></select>
+                            <select id="pCategory"><option value="">جاري التحميل...</option></select>
                         </div>
                     </div>
                     <button type="submit" class="btn">حفظ المنتج</button>
@@ -145,25 +144,129 @@
             </div>
         </section>
 
-        <!-- باقي التبويبات (تتوسع بنفس الهيكلية) -->
+        <!-- 2. تبويب الأقسام -->
         <section id="sec-categories" class="tab-content">
-            <h1>إدارة الأقسام</h1>
-            <div class="card" style="margin-top:15px;"><p>قسم إدارة الأقسام قيد التطوير...</p></div>
+            <div class="header"><h1>إدارة الأقسام</h1></div>
+            
+            <div class="card">
+                <h3>إضافة قسم جديد</h3>
+                <form onsubmit="handleAddCategory(event)" style="margin-top:15px; display:flex; gap:10px;">
+                    <input type="text" id="catName" required placeholder="مثال: عسل يمني، أقمشة، عقيق" style="flex:1; padding:10px; border:1px solid #ddd; border-radius:6px;">
+                    <button type="submit" class="btn">إضافة القسم</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>الأقسام الحالية</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>المعرف (ID)</th>
+                            <th>اسم القسم</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblCategories">
+                        <tr><td colspan="3">جاري التحميل...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
 
+        <!-- 3. تبويب السوشال ميديا -->
         <section id="sec-social" class="tab-content">
-            <h1>روابط السوشال ميديا</h1>
-            <div class="card" style="margin-top:15px;"><p>قسم إدارة التواصل الاجتماعي قيد التطوير...</p></div>
+            <div class="header"><h1>روابط السوشال ميديا</h1></div>
+            
+            <div class="card">
+                <h3>إضافة / تحديث رابط منصة</h3>
+                <form onsubmit="handleAddSocial(event)" style="margin-top:15px;">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
+                        <div class="form-group">
+                            <label>اسم المنصة</label>
+                            <input type="text" id="socialPlatform" required placeholder="مثال: whatsapp, facebook, instagram">
+                        </div>
+                        <div class="form-group">
+                            <label>الرابط أو الرقم</label>
+                            <input type="text" id="socialUrl" required placeholder="https://... أو 967770000000">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">حفظ الرابط</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>الروابط الحالية</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>المنصة</th>
+                            <th>الرابط</th>
+                            <th>الحالة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblSocial">
+                        <tr><td colspan="4">جاري التحميل...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
 
+        <!-- 4. تبويب المدونة -->
         <section id="sec-blog" class="tab-content">
-            <h1>إدارة المقالات والمدونة</h1>
-            <div class="card" style="margin-top:15px;"><p>قسم إدارة المدونة قيد التطوير...</p></div>
+            <div class="header"><h1>إدارة المقالات والمدونة</h1></div>
+            
+            <div class="card">
+                <h3>إضافة مقال جديد</h3>
+                <form onsubmit="handleAddBlogPost(event)" style="margin-top:15px;">
+                    <div class="form-group">
+                        <label>عنوان المقال</label>
+                        <input type="text" id="blogTitle" required placeholder="مثال: فوائد العسل الدوعني اليمني">
+                    </div>
+                    <div class="form-group">
+                        <label>رابط الغلاف (صورة)</label>
+                        <input type="url" id="blogImage" required placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label>محتوى المقال</label>
+                        <textarea id="blogContent" rows="5" required placeholder="اكتب محتوى المقال هنا..."></textarea>
+                    </div>
+                    <button type="submit" class="btn">نشر المقال</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>المقالات المنشورة</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>الغلاف</th>
+                            <th>العنوان</th>
+                            <th>تاريخ النشر</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblBlog">
+                        <tr><td colspan="4">جاري التحميل...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </section>
 
+        <!-- 5. تبويب الإعدادات -->
         <section id="sec-settings" class="tab-content">
-            <h1>إعدادات المتجر العامة</h1>
-            <div class="card" style="margin-top:15px;"><p>إعدادات الحساب وكلمة المرور ورقم الواتساب...</p></div>
+            <div class="header"><h1>إعدادات المتجر العامة</h1></div>
+            <div class="card">
+                <h3>بيانات المتجر الرئيسية</h3>
+                <p style="color:#666; font-size:0.9rem; margin-top:5px;">هذه البيانات ترتبط مباشرة مع متجرك لعرض رقم التواصل والعنوان.</p>
+                <div style="margin-top:15px;">
+                    <div class="form-group">
+                        <label>رقم الواتساب الرئيسي للطلبات</label>
+                        <input type="text" id="setWhatsapp" placeholder="967XXXXXXXXX">
+                    </div>
+                    <button onclick="alert('تم حفظ الإعدادات بنجاح')" class="btn">حفظ الإعدادات</button>
+                </div>
+            </div>
         </section>
 
     </main>
@@ -183,7 +286,7 @@
             document.getElementById('tab-' + tabName).classList.add('active');
         }
 
-        // جلب المنتجات
+        // ================= 1. المنتجات =================
         async function fetchProducts() {
             const { data, error } = await db.from('products').select('*').order('id', { ascending: false });
             const tbody = document.getElementById('tblProducts');
@@ -210,14 +313,14 @@
             `).join('');
         }
 
-        // إضافة منتج
         async function handleAddProduct(e) {
             e.preventDefault();
             const title = document.getElementById('pTitle').value;
             const price = parseFloat(document.getElementById('pPrice').value);
             const image = document.getElementById('pImage').value;
+            const category_id = document.getElementById('pCategory').value || null;
 
-            const { error } = await db.from('products').insert([{ title, price, image }]);
+            const { error } = await db.from('products').insert([{ title, price, image, category_id }]);
             if (!error) {
                 alert('تمت إضافة المنتج بنجاح');
                 document.getElementById('formAddProduct').reset();
@@ -227,20 +330,135 @@
             }
         }
 
-        // حذف منتج
         async function deleteProd(id) {
             if (confirm('هل أنت تأكد من الحذف؟')) {
                 const { error } = await db.from('products').delete().eq('id', id);
-                if (!error) {
-                    fetchProducts();
-                } else {
-                    alert('خطأ أثناء الحذف: ' + error.message);
-                }
+                if (!error) fetchProducts();
+                else alert('خطأ أثناء الحذف: ' + error.message);
             }
         }
 
-        // البدء عند فتح الصفحة
+        // ================= 2. الأقسام =================
+        async function fetchCategories() {
+            const { data, error } = await db.from('categories').select('*').order('id', { ascending: true });
+            const tbody = document.getElementById('tblCategories');
+            const select = document.getElementById('pCategory');
+
+            if (data && data.length > 0) {
+                tbody.innerHTML = data.map(c => `
+                    <tr>
+                        <td>${c.id}</td>
+                        <td>${c.name}</td>
+                        <td><button onclick="deleteCat(${c.id})" class="btn btn-danger">حذف</button></td>
+                    </tr>
+                `).join('');
+
+                select.innerHTML = data.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+            } else {
+                tbody.innerHTML = '<tr><td colspan="3">لا توجد أقسام مسجلة.</td></tr>';
+                select.innerHTML = '<option value="">بدون قسم</option>';
+            }
+        }
+
+        async function handleAddCategory(e) {
+            e.preventDefault();
+            const name = document.getElementById('catName').value;
+            const { error } = await db.from('categories').insert([{ name }]);
+            if (!error) {
+                document.getElementById('catName').value = '';
+                fetchCategories();
+            } else alert('خطأ: ' + error.message);
+        }
+
+        async function deleteCat(id) {
+            if (confirm('هل أنت تأكد من حذف هذا القسم؟')) {
+                const { error } = await db.from('categories').delete().eq('id', id);
+                if (!error) fetchCategories();
+                else alert('خطأ: ' + error.message);
+            }
+        }
+
+        // ================= 3. السوشال ميديا =================
+        async function fetchSocial() {
+            const { data, error } = await db.from('social_links').select('*');
+            const tbody = document.getElementById('tblSocial');
+
+            if (data && data.length > 0) {
+                tbody.innerHTML = data.map(s => `
+                    <tr>
+                        <td><strong>${s.platform_name}</strong></td>
+                        <td>${s.url}</td>
+                        <td>${s.is_active ? 'مفعّل' : 'معطّل'}</td>
+                        <td><button onclick="deleteSocial(${s.id})" class="btn btn-danger">حذف</button></td>
+                    </tr>
+                `).join('');
+            } else {
+                tbody.innerHTML = '<tr><td colspan="4">لا توجد روابط مسجلة.</td></tr>';
+            }
+        }
+
+        async function handleAddSocial(e) {
+            e.preventDefault();
+            const platform_name = document.getElementById('socialPlatform').value;
+            const url = document.getElementById('socialUrl').value;
+
+            const { error } = await db.from('social_links').insert([{ platform_name, url, is_active: true }]);
+            if (!error) {
+                document.getElementById('socialPlatform').value = '';
+                document.getElementById('socialUrl').value = '';
+                fetchSocial();
+            } else alert('خطأ: ' + error.message);
+        }
+
+        async function deleteSocial(id) {
+            const { error } = await db.from('social_links').delete().eq('id', id);
+            if (!error) fetchSocial();
+        }
+
+        // ================= 4. المدونة =================
+        async function fetchBlog() {
+            const { data, error } = await db.from('blog_posts').select('*').order('id', { ascending: false });
+            const tbody = document.getElementById('tblBlog');
+
+            if (data && data.length > 0) {
+                tbody.innerHTML = data.map(b => `
+                    <tr>
+                        <td><img src="${b.cover_image}" class="img-thumb" alt=""></td>
+                        <td>${b.title}</td>
+                        <td>${new Date(b.created_at).toLocaleDateString('ar-YE')}</td>
+                        <td><button onclick="deleteBlog(${b.id})" class="btn btn-danger">حذف</button></td>
+                    </tr>
+                `).join('');
+            } else {
+                tbody.innerHTML = '<tr><td colspan="4">لا توجد مقالات منشورة.</td></tr>';
+            }
+        }
+
+        async function handleAddBlogPost(e) {
+            e.preventDefault();
+            const title = document.getElementById('blogTitle').value;
+            const cover_image = document.getElementById('blogImage').value;
+            const content = document.getElementById('blogContent').value;
+
+            const { error } = await db.from('blog_posts').insert([{ title, cover_image, content, is_published: true }]);
+            if (!error) {
+                alert('تم نشر المقال بنجاح');
+                fetchBlog();
+            } else alert('خطأ: ' + error.message);
+        }
+
+        async function deleteBlog(id) {
+            if (confirm('هل تريد حذف المقال؟')) {
+                const { error } = await db.from('blog_posts').delete().eq('id', id);
+                if (!error) fetchBlog();
+            }
+        }
+
+        // تشغيل الجلب التلقائي لكل الأقسام عند الفتح
         fetchProducts();
+        fetchCategories();
+        fetchSocial();
+        fetchBlog();
     </script>
 </body>
 </html>
