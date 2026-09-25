@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="docTitle">لوحة التحكم - إدارة المتجر</title>
+    <title id="docTitle">لوحة التحكم - تسجيل الدخول</title>
 
     <!-- Supabase JS Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -20,58 +20,46 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
         body { display: flex; background-color: var(--bg-light); color: var(--text-dark); min-height: 100vh; }
 
+        /* نافذة تسجيل الدخول */
+        #loginOverlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(30, 30, 45, 0.95); z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .login-box {
+            background: #fff; padding: 35px; border-radius: 12px;
+            width: 100%; max-width: 400px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .login-box h2 { margin-bottom: 20px; color: var(--primary-color); }
+
         /* الشريط الجانبي */
         .sidebar {
-            width: var(--sidebar-width);
-            background-color: var(--bg-dark);
-            color: #fff;
-            padding: 20px 0;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100vh;
-            z-index: 100;
+            width: var(--sidebar-width); background-color: var(--bg-dark);
+            color: #fff; padding: 20px 0; display: flex; flex-direction: column;
+            position: fixed; height: 100vh; z-index: 100;
         }
-        .sidebar h2 { text-align: center; margin-bottom: 20px; font-size: 1.2rem; color: var(--primary-color); padding: 0 10px; word-break: break-word; }
+        .sidebar h2 { text-align: center; margin-bottom: 20px; font-size: 1.2rem; color: var(--primary-color); padding: 0 10px; }
         .sidebar nav a {
-            display: block;
-            padding: 12px 25px;
-            color: #a2a3b7;
-            text-decoration: none;
-            transition: 0.3s;
-            cursor: pointer;
+            display: block; padding: 12px 25px; color: #a2a3b7; text-decoration: none;
+            transition: 0.3s; cursor: pointer;
         }
         .sidebar nav a:hover, .sidebar nav a.active {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: #fff;
+            background-color: rgba(255, 255, 255, 0.05); color: #fff;
         }
-        html[dir="rtl"] .sidebar nav a:hover, html[dir="rtl"] .sidebar nav a.active {
-            border-right: 4px solid var(--primary-color);
-        }
-        html[dir="ltr"] .sidebar nav a:hover, html[dir="ltr"] .sidebar nav a.active {
-            border-left: 4px solid var(--primary-color);
-        }
+        html[dir="rtl"] .sidebar nav a:hover, html[dir="rtl"] .sidebar nav a.active { border-right: 4px solid var(--primary-color); }
+        html[dir="ltr"] .sidebar nav a:hover, html[dir="ltr"] .sidebar nav a.active { border-left: 4px solid var(--primary-color); }
 
-        /* المحتوى الرئيسي */
-        .main-content {
-            margin-right: var(--sidebar-width);
-            flex: 1;
-            padding: 30px;
-        }
-        html[dir="ltr"] .main-content {
-            margin-right: 0;
-            margin-left: var(--sidebar-width);
-        }
+        .main-content { margin-right: var(--sidebar-width); flex: 1; padding: 30px; }
+        html[dir="ltr"] .main-content { margin-right: 0; margin-left: var(--sidebar-width); }
 
         .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
         .card { background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 25px; }
 
-        /* التبويبات */
         .tab-content { display: none; }
         .tab-content.active { display: block; }
 
-        /* النماذج والجداول */
-        .form-group { margin-bottom: 15px; }
+        .form-group { margin-bottom: 15px; text-align: right; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
         .form-group input, .form-group select, .form-group textarea {
             width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px;
@@ -81,38 +69,50 @@
             padding: 10px 20px; border-radius: 6px; cursor: pointer; font-size: 1rem;
         }
         .btn-danger { background-color: #dc3545; }
+        .btn-secondary { background-color: #6c757d; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        table th, table td { padding: 12px; border-bottom: 1px solid #eee; }
-        html[dir="rtl"] table th, html[dir="rtl"] table td { text-align: right; }
-        html[dir="ltr"] table th, html[dir="ltr"] table td { text-align: left; }
+        table th, table td { padding: 12px; border-bottom: 1px solid #eee; text-align: right; }
         table th { background-color: #f8f9fa; }
         .img-thumb { width: 45px; height: 45px; object-fit: cover; border-radius: 4px; }
         
-        .lang-btn {
-            background: #fff;
-            border: 1px solid var(--primary-color);
-            color: var(--primary-color);
-            padding: 5px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
+        .user-badge {
+            background: rgba(184, 134, 11, 0.2); color: var(--primary-color);
+            padding: 4px 10px; border-radius: 12px; font-size: 0.85rem; font-weight: bold;
         }
-
-        .required-tag { color: #dc3545; margin-right: 3px; }
     </style>
 </head>
 <body>
+
+    <!-- 🔒 نافذة تسجيل الدخول -->
+    <div id="loginOverlay">
+        <div class="login-box">
+            <h2 id="loginTitle">تسجيل الدخول للوحة التحكم</h2>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label>اسم المستخدم</label>
+                    <input type="text" id="loginUsername" required placeholder="ادخل اسم المستخدم">
+                </div>
+                <div class="form-group">
+                    <label>كلمة السر</label>
+                    <input type="password" id="loginPassword" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">دخول</button>
+            </form>
+            <p id="loginError" style="color: #dc3545; margin-top: 15px; font-size: 0.9rem; display: none;"></p>
+        </div>
+    </div>
 
     <!-- الشريط الجانبي -->
     <aside class="sidebar">
         <h2 id="txtBrand">لوحة التحكم</h2>
         <nav>
-            <a onclick="switchTab('products')" class="active" id="tab-products">📦 <span class="i18n-prod">إدارة المنتجات</span></a>
-            <a onclick="switchTab('categories')" id="tab-categories">🏷️ <span class="i18n-cat">إدارة الأقسام</span></a>
-            <a onclick="switchTab('social')" id="tab-social">🌐 <span class="i18n-social">السوشال ميديا</span></a>
-            <a onclick="switchTab('blog')" id="tab-blog">📝 <span class="i18n-blog">إدارة المدونة</span></a>
-            <a onclick="switchTab('settings')" id="tab-settings">⚙️ <span class="i18n-settings">إعدادات المتجر</span></a>
+            <a onclick="switchTab('products')" class="active" id="tab-products">📦 <span>إدارة المنتجات</span></a>
+            <a onclick="switchTab('categories')" id="tab-categories">🏷️ <span>إدارة الأقسام</span></a>
+            <a onclick="switchTab('social')" id="tab-social">🌐 <span>السوشال ميديا</span></a>
+            <a onclick="switchTab('blog')" id="tab-blog">📝 <span>إدارة المدونة</span></a>
+            <a onclick="switchTab('settings')" id="tab-settings" class="admin-only">⚙️ <span>إعدادات المتجر</span></a>
+            <a onclick="switchTab('users')" id="tab-users" class="admin-only">👥 <span>إدارة المستخدمين</span></a>
         </nav>
     </aside>
 
@@ -120,18 +120,22 @@
     <main class="main-content">
 
         <div class="header">
-            <h1 id="pageHeading">لوحة التحكم</h1>
-            <button class="lang-btn" onclick="toggleLanguage()" id="langToggleBtn">English 🌐</button>
+            <div>
+                <h1 id="pageHeading" style="display:inline-block; margin-left: 15px;">لوحة التحكم</h1>
+                <span id="userRoleBadge" class="user-badge">مستخدم</span>
+            </div>
+            <div>
+                <button class="btn btn-secondary" onclick="handleLogout()" style="padding: 6px 15px; font-size: 0.9rem;">تسجيل الخروج 🚪</button>
+            </div>
         </div>
 
         <!-- 1. تبويب المنتجات -->
         <section id="sec-products" class="tab-content active">
             <div class="card">
-                <h3 class="i18n-add-product">إضافة منتج جديد</h3>
+                <h3>إضافة منتج جديد</h3>
                 <form id="formAddProduct" onsubmit="handleAddProduct(event)" style="margin-top:15px;">
-                    <!-- 📌 الخطوة الأولى: اختيار القسم أولاً بشكل إجباري -->
                     <div class="form-group" style="background-color: #fcf8e3; padding: 12px; border-radius: 6px; border: 1px solid #faebcc;">
-                        <label class="i18n-cat-select" style="color: #8a6d3b;">1. حدد القسم أولاً <span class="required-tag">*</span></label>
+                        <label style="color: #8a6d3b;">1. حدد القسم أولاً *</label>
                         <select id="pCategory" required style="background: #fff; font-weight: bold;">
                             <option value="" disabled selected>-- اختر القسم الذي ينتمي إليه المنتج --</option>
                         </select>
@@ -139,33 +143,31 @@
 
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
                         <div class="form-group">
-                            <label class="i18n-pname-ar">2. اسم المنتج (بالعربي) <span class="required-tag">*</span></label>
+                            <label>2. اسم المنتج (بالعربي) *</label>
                             <input type="text" id="pTitle" required placeholder="عسل دوعني سدر">
                         </div>
                         <div class="form-group">
-                            <label class="i18n-pname-en">اسم المنتج (بالإنجليزي)</label>
+                            <label>اسم المنتج (بالإنجليزي)</label>
                             <input type="text" id="pTitleEn" placeholder="Do'ani Sidr Honey">
                         </div>
                     </div>
 
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
                         <div class="form-group">
-                            <label class="i18n-price">السعر الأساسي <span class="required-tag">*</span></label>
+                            <label>السعر الأساسي *</label>
                             <input type="number" id="pPrice" required placeholder="15000">
                         </div>
                         <div class="form-group">
-                            <label class="i18n-img">رابط الصورة <span class="required-tag">*</span></label>
+                            <label>رابط الصورة *</label>
                             <input type="url" id="pImage" required placeholder="https://...">
                         </div>
                     </div>
-                    <button type="submit" class="btn i18n-save">حفظ المنتج</button>
+                    <button type="submit" class="btn">حفظ المنتج</button>
                 </form>
             </div>
 
             <div class="card">
-                <h3 class="i18n-prod-list">قائمة المنتجات المتاحة</h3>
-                
-                <!-- 🔍 أدوات البحث والفلترة للمنتجات في الإدارة -->
+                <h3>قائمة المنتجات المتاحة</h3>
                 <div style="display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap;">
                     <input type="text" id="adminSearchProd" oninput="filterAdminProducts()" placeholder="🔍 ابحث عن منتج بالاسم..." style="flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px;">
                     <select id="adminFilterCat" onchange="filterAdminProducts()" style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px;">
@@ -176,10 +178,10 @@
                 <table>
                     <thead>
                         <tr>
-                            <th class="i18n-th-img">الصورة</th>
-                            <th class="i18n-th-title">الاسم</th>
-                            <th class="i18n-th-price">السعر</th>
-                            <th class="i18n-th-actions">الإجراءات</th>
+                            <th>الصورة</th>
+                            <th>الاسم</th>
+                            <th>السعر</th>
+                            <th>الإجراءات</th>
                         </tr>
                     </thead>
                     <tbody id="tblProducts">
@@ -192,21 +194,21 @@
         <!-- 2. تبويب الأقسام -->
         <section id="sec-categories" class="tab-content">
             <div class="card">
-                <h3 class="i18n-add-cat">إضافة قسم جديد</h3>
+                <h3>إضافة قسم جديد</h3>
                 <form onsubmit="handleAddCategory(event)" style="margin-top:15px; display:flex; gap:10px;">
                     <input type="text" id="catName" required placeholder="اسم القسم" style="flex:1; padding:10px; border:1px solid #ddd; border-radius:6px;">
-                    <button type="submit" class="btn i18n-add">إضافة القسم</button>
+                    <button type="submit" class="btn">إضافة القسم</button>
                 </form>
             </div>
 
             <div class="card">
-                <h3 class="i18n-cat-list">الأقسام الحالية</h3>
+                <h3>الأقسام الحالية</h3>
                 <table>
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th class="i18n-th-catname">اسم القسم</th>
-                            <th class="i18n-th-actions">الإجراءات</th>
+                            <th>اسم القسم</th>
+                            <th>الإجراءات</th>
                         </tr>
                     </thead>
                     <tbody id="tblCategories">
@@ -219,31 +221,31 @@
         <!-- 3. تبويب السوشال ميديا -->
         <section id="sec-social" class="tab-content">
             <div class="card">
-                <h3 class="i18n-add-social">إضافة / تحديث رابط منصة</h3>
+                <h3>إضافة / تحديث رابط منصة</h3>
                 <form onsubmit="handleAddSocial(event)" style="margin-top:15px;">
                     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px;">
                         <div class="form-group">
-                            <label class="i18n-platform">اسم المنصة</label>
+                            <label>اسم المنصة</label>
                             <input type="text" id="socialPlatform" required placeholder="facebook, instagram, tiktok">
                         </div>
                         <div class="form-group">
-                            <label class="i18n-link">الرابط</label>
+                            <label>الرابط</label>
                             <input type="text" id="socialUrl" required placeholder="https://...">
                         </div>
                     </div>
-                    <button type="submit" class="btn i18n-save">حفظ الرابط</button>
+                    <button type="submit" class="btn">حفظ الرابط</button>
                 </form>
             </div>
 
             <div class="card">
-                <h3 class="i18n-social-list">الروابط الحالية</h3>
+                <h3>الروابط الحالية</h3>
                 <table>
                     <thead>
                         <tr>
-                            <th class="i18n-platform">المنصة</th>
-                            <th class="i18n-link">الرابط</th>
-                            <th class="i18n-status">الحالة</th>
-                            <th class="i18n-th-actions">الإجراءات</th>
+                            <th>المنصة</th>
+                            <th>الرابط</th>
+                            <th>الحالة</th>
+                            <th>الإجراءات</th>
                         </tr>
                     </thead>
                     <tbody id="tblSocial">
@@ -256,33 +258,33 @@
         <!-- 4. تبويب المدونة -->
         <section id="sec-blog" class="tab-content">
             <div class="card">
-                <h3 class="i18n-add-post">إضافة مقال جديد</h3>
+                <h3>إضافة مقال جديد</h3>
                 <form onsubmit="handleAddBlogPost(event)" style="margin-top:15px;">
                     <div class="form-group">
-                        <label class="i18n-post-title">عنوان المقال</label>
+                        <label>عنوان المقال</label>
                         <input type="text" id="blogTitle" required placeholder="فوائد العسل اليمني">
                     </div>
                     <div class="form-group">
-                        <label class="i18n-cover-img">رابط الغلاف (صورة)</label>
+                        <label>رابط الغلاف (صورة)</label>
                         <input type="url" id="blogImage" required placeholder="https://...">
                     </div>
                     <div class="form-group">
-                        <label class="i18n-content">محتوى المقال</label>
+                        <label>محتوى المقال</label>
                         <textarea id="blogContent" rows="5" required placeholder="اكتب محتوى المقال..."></textarea>
                     </div>
-                    <button type="submit" class="btn i18n-publish">نشر المقال</button>
+                    <button type="submit" class="btn">نشر المقال</button>
                 </form>
             </div>
 
             <div class="card">
-                <h3 class="i18n-posts-list">المقالات المنشورة</h3>
+                <h3>المقالات المنشورة</h3>
                 <table>
                     <thead>
                         <tr>
-                            <th class="i18n-cover-img">الغلاف</th>
-                            <th class="i18n-post-title">العنوان</th>
-                            <th class="i18n-date">تاريخ النشر</th>
-                            <th class="i18n-th-actions">الإجراءات</th>
+                            <th>الغلاف</th>
+                            <th>العنوان</th>
+                            <th>تاريخ النشر</th>
+                            <th>الإجراءات</th>
                         </tr>
                     </thead>
                     <tbody id="tblBlog">
@@ -292,31 +294,30 @@
             </div>
         </section>
 
-        <!-- 5. تبويب الإعدادات -->
-        <section id="sec-settings" class="tab-content">
+        <!-- 5. تبويب الإعدادات (خاص بالمدير Admin فقط) -->
+        <section id="sec-settings" class="tab-content admin-only">
             <div class="card">
                 <h3>🏪 اسم المتجر</h3>
                 <div style="margin-top:15px;">
                     <div class="form-group">
-                        <label>اسم المتجر (يظهر في الهيدر والفوتر والعنوان):</label>
+                        <label>اسم المتجر:</label>
                         <input type="text" id="setStoreName" placeholder="مثال: أرض حمير">
                     </div>
                 </div>
             </div>
 
             <div class="card">
-                <h3 class="i18n-wa-settings">💬 إعدادات زر الواتساب العائم</h3>
+                <h3>💬 إعدادات زر الواتساب العائم</h3>
                 <div style="margin-top:15px;">
                     <div class="form-group">
-                        <label class="i18n-wa-num">رقم الواتساب (مع الرمز الدولي بدون +)</label>
+                        <label>رقم الواتساب (بدون +)</label>
                         <input type="text" id="setWhatsapp" placeholder="مثال: 967770000000">
                     </div>
                 </div>
             </div>
 
             <div class="card">
-                <h3 class="i18n-curr-settings">💱 إعدادات العملات وأسعار الصرف</h3>
-                <p style="color:#666; font-size:0.85rem; margin-top:5px;" class="i18n-curr-desc">قم بتحديد أسعار الصرف بالنسبة لعملة متجرك الأساسية.</p>
+                <h3>💱 إعدادات العملات وأسعار الصرف</h3>
                 <div style="margin-top:15px; display:grid; grid-template-columns: 1fr 1fr 1fr; gap:15px;">
                     <div class="form-group">
                         <label>🇸🇦 ريال سعودي (SAR)</label>
@@ -331,7 +332,53 @@
                         <input type="number" step="0.0001" id="rateJOD" placeholder="سعر الصرف">
                     </div>
                 </div>
-                <button onclick="saveStoreSettings()" class="btn i18n-save-settings" style="margin-top: 10px;">حفظ كل الإعدادات</button>
+                <button onclick="saveStoreSettings()" class="btn" style="margin-top: 10px;">حفظ كل الإعدادات</button>
+            </div>
+        </section>
+
+        <!-- 6. تبويب إدارة المستخدمين والصلاحيات (Admin فقط) -->
+        <section id="sec-users" class="tab-content admin-only">
+            <div class="card">
+                <h3>👥 إضافة مستخدم جديد للوحة التحكم</h3>
+                <form onsubmit="handleAddUser(event)" style="margin-top:15px;">
+                    <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:15px;">
+                        <div class="form-group">
+                            <label>اسم المستخدم *</label>
+                            <input type="text" id="newUsername" required placeholder="مثال: manager1">
+                        </div>
+                        <div class="form-group">
+                            <label>كلمة السر *</label>
+                            <input type="password" id="newPassword" required placeholder="••••••••">
+                        </div>
+                        <div class="form-group">
+                            <label>الصلاحية / الدور *</label>
+                            <select id="newUserRole">
+                                <option value="editor">محرر (Editor)</option>
+                                <option value="data_entry">مدخل بيانات (Data Entry)</option>
+                                <option value="admin">مدير نظام (Admin)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn">إضافة المستخدم</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3>قائمة المستخدمين الحالية</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>اسم المستخدم</th>
+                            <th>الصلاحية</th>
+                            <th>تاريخ الإضافة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblUsers">
+                        <tr><td colspan="5">جاري التحميل...</td></tr>
+                    </tbody>
+                </table>
             </div>
         </section>
 
@@ -342,61 +389,69 @@
         const SUPABASE_KEY = 'sb_publishable_TPyNp8bSFHE6xO5GGdEtbA_8_53idMv';
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let currentLang = 'ar';
+        let currentUser = null;
         let allAdminProducts = [];
 
-        const translations = {
-            ar: {
-                prod: "إدارة المنتجات", cat: "إدارة الأقسام", social: "السوشال ميديا", blog: "إدارة المدونة", settings: "إعدادات المتجر",
-                addProduct: "إضافة منتج جديد", pNameAr: "2. اسم المنتج (بالعربي) *", pNameEn: "اسم المنتج (بالإنجليزي)",
-                price: "السعر الأساسي *", img: "رابط الصورة *", catSelect: "1. حدد القسم أولاً *", save: "حفظ المنتج",
-                prodList: "قائمة المنتجات المتاحة", thImg: "الصورة", thTitle: "الاسم", thPrice: "السعر", thActions: "الإجراءات",
-                addCat: "إضافة قسم جديد", catList: "الأقسام الحالية", addSocial: "إضافة / تحديث رابط منصة", socialList: "الروابط الحالية",
-                addPost: "إضافة مقال جديد", postsList: "المقالات المنشورة", waSettings: "💬 إعدادات زر الواتساب العائم",
-                waNum: "رقم الواتساب (مع الرمز الدولي بدون +)", currSettings: "💱 إعدادات العملات وأسعار الصرف",
-                currDesc: "قم بتحديد أسعار الصرف بالنسبة للعملة الأساسية للمتجر.", saveSettings: "حفظ كل الإعدادات", langBtn: "English 🌐"
-            },
-            en: {
-                prod: "Products Management", cat: "Categories", social: "Social Media", blog: "Blog & News", settings: "Store Settings",
-                addProduct: "Add New Product", pNameAr: "2. Product Name (Arabic) *", pNameEn: "Product Name (English)",
-                price: "Base Price *", img: "Image URL *", catSelect: "1. Select Category First *", save: "Save Product",
-                prodList: "Available Products", thImg: "Image", thTitle: "Name", thPrice: "Price", thActions: "Actions",
-                addCat: "Add New Category", catList: "Current Categories", addSocial: "Add / Update Social Link", socialList: "Social Links",
-                addPost: "Add New Article", postsList: "Published Articles", waSettings: "💬 Floating WhatsApp Settings",
-                waNum: "WhatsApp Number (with country code, no +)", currSettings: "💱 Currencies & Exchange Rates",
-                currDesc: "Define exchange rates relative to store base currency.", saveSettings: "Save All Settings", langBtn: "عربي 🌐"
-            }
-        };
+        // 🔐 التحقق وتسجيل الدخول
+        async function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            const errEl = document.getElementById('loginError');
 
-        function toggleLanguage() {
-            currentLang = currentLang === 'ar' ? 'en' : 'ar';
-            document.getElementById('htmlTag').dir = currentLang === 'ar' ? 'rtl' : 'ltr';
-            document.getElementById('htmlTag').lang = currentLang;
-            document.getElementById('langToggleBtn').innerText = translations[currentLang].langBtn;
-            
-            const t = translations[currentLang];
-            document.querySelector('.i18n-prod').innerText = t.prod;
-            document.querySelector('.i18n-cat').innerText = t.cat;
-            document.querySelector('.i18n-social').innerText = t.social;
-            document.querySelector('.i18n-blog').innerText = t.blog;
-            document.querySelector('.i18n-settings').innerText = t.settings;
-            document.querySelector('.i18n-add-product').innerText = t.addProduct;
-            document.querySelector('.i18n-pname-ar').innerHTML = t.pNameAr;
-            document.querySelector('.i18n-pname-en').innerText = t.pNameEn;
-            document.querySelector('.i18n-price').innerHTML = t.price;
-            document.querySelector('.i18n-img').innerHTML = t.img;
-            document.querySelector('.i18n-cat-select').innerHTML = t.catSelect;
-            document.querySelector('.i18n-save').innerText = t.save;
-            document.querySelector('.i18n-prod-list').innerText = t.prodList;
-            document.querySelector('.i18n-th-img').innerText = t.thImg;
-            document.querySelector('.i18n-th-title').innerText = t.thTitle;
-            document.querySelector('.i18n-th-price').innerText = t.thPrice;
-            document.querySelector('.i18n-th-actions').innerText = t.thActions;
-            document.querySelector('.i18n-wa-settings').innerText = t.waSettings;
-            document.querySelector('.i18n-wa-num').innerText = t.waNum;
-            document.querySelector('.i18n-curr-settings').innerText = t.currSettings;
-            document.querySelector('.i18n-curr-desc').innerText = t.currDesc;
-            document.querySelector('.i18n-save-settings').innerText = t.saveSettings;
+            errEl.style.display = 'none';
+
+            const { data, error } = await db.from('users')
+                .select('*')
+                .eq('username', username)
+                .eq('password_hash', password)
+                .single();
+
+            if (error || !data) {
+                errEl.innerText = 'اسم المستخدم أو كلمة السر غير صحيحة!';
+                errEl.style.display = 'block';
+                return;
+            }
+
+            currentUser = data;
+            localStorage.setItem('admin_user', JSON.stringify(data));
+            initDashboard();
+        }
+
+        function checkAuth() {
+            const saved = localStorage.getItem('admin_user');
+            if (saved) {
+                currentUser = JSON.parse(saved);
+                initDashboard();
+            } else {
+                document.getElementById('loginOverlay').style.display = 'flex';
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('admin_user');
+            location.reload();
+        }
+
+        function initDashboard() {
+            document.getElementById('loginOverlay').style.display = 'none';
+            document.getElementById('userRoleBadge').innerText = `الصلاحية: ${currentUser.role.toUpperCase()}`;
+
+            // التحكم بالعناصر المتاحة حسب الصلاحية
+            if (currentUser.role !== 'admin') {
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = 'none');
+            } else {
+                document.querySelectorAll('.admin-only').forEach(el => el.style.display = '');
+            }
+
+            fetchCategories();
+            fetchProducts();
+            fetchSocial();
+            fetchBlog();
+            if (currentUser.role === 'admin') {
+                loadStoreSettings();
+                fetchUsers();
+            }
         }
 
         function switchTab(tabName) {
@@ -413,8 +468,6 @@
             if (!error && data) {
                 allAdminProducts = data;
                 filterAdminProducts();
-            } else {
-                document.getElementById('tblProducts').innerHTML = '<tr><td colspan="4">حدث خطأ في تحميل المنتجات.</td></tr>';
             }
         }
 
@@ -434,12 +487,16 @@
                 return;
             }
 
+            const canDelete = currentUser && (currentUser.role === 'admin' || currentUser.role === 'editor');
+
             tbody.innerHTML = filtered.map(p => `
                 <tr>
                     <td><img src="${p.image}" class="img-thumb" alt=""></td>
                     <td>${p.title} ${p.title_en ? `<br><small style="color:#888;">(${p.title_en})</small>` : ''}</td>
                     <td>${p.price}</td>
-                    <td><button onclick="deleteProd(${p.id})" class="btn btn-danger">حذف</button></td>
+                    <td>
+                        ${canDelete ? `<button onclick="deleteProd(${p.id})" class="btn btn-danger">حذف</button>` : '<small style="color:#888;">غير مصرح بالحذف</small>'}
+                    </td>
                 </tr>
             `).join('');
         }
@@ -447,7 +504,6 @@
         async function handleAddProduct(e) {
             e.preventDefault();
             const category_id = document.getElementById('pCategory').value;
-
             if (!category_id) {
                 alert('يرجى تحديد القسم الذي ينتمي إليه المنتج أولاً!');
                 return;
@@ -463,13 +519,16 @@
                 alert('تمت إضافة المنتج بنجاح');
                 document.getElementById('formAddProduct').reset();
                 fetchProducts();
-                fetchCategories();
             } else {
                 alert('خطأ: ' + error.message);
             }
         }
 
         async function deleteProd(id) {
+            if (currentUser.role === 'data_entry') {
+                alert('غير مصرح لمدخل البيانات بحذف المنتجات.');
+                return;
+            }
             if (confirm('هل أنت تأكد من الحذف؟')) {
                 const { error } = await db.from('products').delete().eq('id', id);
                 if (!error) fetchProducts();
@@ -497,10 +556,6 @@
 
                 selectFilter.innerHTML = '<option value="">جميع الأقسام</option>' +
                     data.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
-            } else {
-                tbody.innerHTML = '<tr><td colspan="3">لا توجد أقسام مسجلة.</td></tr>';
-                selectForm.innerHTML = '<option value="" disabled selected>⚠️ لا توجد أقسام، قم بإضافة قسم أولاً</option>';
-                selectFilter.innerHTML = '<option value="">جميع الأقسام</option>';
             }
         }
 
@@ -521,7 +576,7 @@
             }
         }
 
-        // ================= 3. السوشال ميديا =================
+        // ================= 3. السوشال ميديا والمدونة =================
         async function fetchSocial() {
             const { data } = await db.from('social_links').select('*');
             const tbody = document.getElementById('tblSocial');
@@ -534,8 +589,6 @@
                         <td><button onclick="deleteSocial(${s.id})" class="btn btn-danger">حذف</button></td>
                     </tr>
                 `).join('');
-            } else {
-                tbody.innerHTML = '<tr><td colspan="4">لا توجد روابط.</td></tr>';
             }
         }
 
@@ -552,7 +605,6 @@
             fetchSocial();
         }
 
-        // ================= 4. المدونة =================
         async function fetchBlog() {
             const { data } = await db.from('blog_posts').select('*').order('id', { ascending: false });
             const tbody = document.getElementById('tblBlog');
@@ -565,8 +617,6 @@
                         <td><button onclick="deleteBlog(${b.id})" class="btn btn-danger">حذف</button></td>
                     </tr>
                 `).join('');
-            } else {
-                tbody.innerHTML = '<tr><td colspan="4">لا توجد مقالات.</td></tr>';
             }
         }
 
@@ -586,53 +636,76 @@
             }
         }
 
-        // ================= 5. الإعدادات واسم المتجر =================
+        // ================= 4. الإعدادات واختبار الصلاحيات =================
         async function loadStoreSettings() {
             const { data } = await db.from('store_settings').select('*').single();
             if (data) {
-                document.getElementById('setStoreName').value = data.store_name || 'أرض حمير';
+                document.getElementById('setStoreName').value = data.store_name || '';
                 document.getElementById('setWhatsapp').value = data.whatsapp_number || '';
                 document.getElementById('rateSAR').value = data.rate_sar || '';
                 document.getElementById('rateUSD').value = data.rate_usd || '';
                 document.getElementById('rateJOD').value = data.rate_jod || '';
-
-                if (data.store_name) {
-                    document.getElementById('txtBrand').innerText = data.store_name + ' | الإدارة';
-                    document.title = data.store_name + ' - لوحة التحكم';
-                }
             }
         }
 
         async function saveStoreSettings() {
-            const store_name = document.getElementById('setStoreName').value || 'أرض حمير';
+            if (currentUser.role !== 'admin') {
+                alert('عذراً، تقتصر الصلاحية على حساب المدير الرئيسي فقط.');
+                return;
+            }
+            const store_name = document.getElementById('setStoreName').value;
             const whatsapp_number = document.getElementById('setWhatsapp').value;
             const rate_sar = parseFloat(document.getElementById('rateSAR').value) || 1;
             const rate_usd = parseFloat(document.getElementById('rateUSD').value) || 1;
             const rate_jod = parseFloat(document.getElementById('rateJOD').value) || 1;
 
-            const { error } = await db.from('store_settings').upsert({
-                id: 1,
-                store_name,
-                whatsapp_number,
-                rate_sar,
-                rate_usd,
-                rate_jod
-            });
+            const { error } = await db.from('store_settings').upsert({ id: 1, store_name, whatsapp_number, rate_sar, rate_usd, rate_jod });
+            if (!error) alert('تم حفظ الإعدادات بنجاح!');
+        }
 
-            if (!error) {
-                alert('تم حفظ إعدادات المتجر واسم المتجر بنجاح!');
-                document.getElementById('txtBrand').innerText = store_name + ' | الإدارة';
-            } else {
-                alert('خطأ في الحفظ: ' + error.message);
+        // ================= 5. إدارة المستخدمين =================
+        async function fetchUsers() {
+            const { data } = await db.from('users').select('*').order('id', { ascending: true });
+            const tbody = document.getElementById('tblUsers');
+            if (data && data.length > 0) {
+                tbody.innerHTML = data.map(u => `
+                    <tr>
+                        <td>${u.id}</td>
+                        <td><strong>${u.username}</strong></td>
+                        <td><span class="user-badge">${u.role}</span></td>
+                        <td>${new Date(u.created_at).toLocaleDateString('ar-YE')}</td>
+                        <td>
+                            ${u.username !== 'admin' ? `<button onclick="deleteUser(${u.id})" class="btn btn-danger">حذف</button>` : '<small style="color:#888;">المدير الأساسي</small>'}
+                        </td>
+                    </tr>
+                `).join('');
             }
         }
 
-        // التشغيل التلقائي
-        fetchCategories();
-        fetchProducts();
-        fetchSocial();
-        fetchBlog();
-        loadStoreSettings();
+        async function handleAddUser(e) {
+            e.preventDefault();
+            const username = document.getElementById('newUsername').value.trim();
+            const password_hash = document.getElementById('newPassword').value.trim();
+            const role = document.getElementById('newUserRole').value;
+
+            const { error } = await db.from('users').insert([{ username, password_hash, role }]);
+            if (!error) {
+                alert('تمت إضافة المستخدم بنجاح!');
+                document.getElementById('newUsername').value = '';
+                document.getElementById('newPassword').value = '';
+                fetchUsers();
+            } else alert('خطأ: ' + error.message);
+        }
+
+        async function deleteUser(id) {
+            if (confirm('هل تريد حذف هذا المستخدم؟')) {
+                await db.from('users').delete().eq('id', id);
+                fetchUsers();
+            }
+        }
+
+        // بدء الفحص عند التحميل
+        checkAuth();
     </script>
 </body>
 </html>
