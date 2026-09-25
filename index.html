@@ -739,9 +739,9 @@ if (SUPABASE_URL && SUPABASE_URL !== '') {
             e.preventDefault();
             const title = document.getElementById('prodTitle').value;
             const price = parseFloat(document.getElementById('prodPrice').value);
-            const image_url = document.getElementById('prodImage').value;
+            const image = document.getElementById('prodImage').value;
 
-            const newProd = { title, price, image_url, category_id: 1 };
+           const newProd = { title, price, image, category_id: 1 };
 
             if (supabaseClient) {
                 const { error } = await supabaseClient.from('products').insert([newProd]);
