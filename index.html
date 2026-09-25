@@ -559,14 +559,14 @@
 
     <!-- JavaScript & Supabase Integration -->
     <script>
-        // 1. إعدادات Supabase (استبدل القيم ببيانات مشروعك الخاصة)
-        const SUPABASE_URL = 'https://gygjtvfwhdfiwcahdqyw.supabase.co/rest/v1/';
-        const SUPABASE_KEY = 'sb_publishable_TPyNp8bSFHE6xO5GGdEtbA_8_53idMv';
-        
-        let supabaseClient = null;
-        if (SUPABASE_URL !== 'https://gygjtvfwhdfiwcahdqyw.supabase.co/rest/v1/') {
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        }
+        // 1. إعدادات Supabase
+const SUPABASE_URL = 'https://gygjtvfwhdfiwcahdqyw.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_TPyNp8bSFHE6xO5GGdEtbA_8_53idMv';
+
+let supabaseClient = null;
+if (SUPABASE_URL && SUPABASE_URL !== '') {
+    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+}
 
         // بيانات افتراضية ممتازة للعرض التجريبي إذا لم يتم ربط السيرفر بعد
         let productsData = [
