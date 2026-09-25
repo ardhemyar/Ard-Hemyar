@@ -30,6 +30,7 @@
             flex-direction: column;
             position: fixed;
             height: 100vh;
+            z-index: 100;
         }
         .sidebar h2 { text-align: center; margin-bottom: 20px; font-size: 1.2rem; color: var(--primary-color); padding: 0 10px; word-break: break-word; }
         .sidebar nav a {
@@ -128,6 +129,7 @@
             <div class="card">
                 <h3 class="i18n-add-product">إضافة منتج جديد</h3>
                 <form id="formAddProduct" onsubmit="handleAddProduct(event)" style="margin-top:15px;">
+                    <!-- 📌 الخطوة الأولى: اختيار القسم أولاً بشكل إجباري -->
                     <div class="form-group" style="background-color: #fcf8e3; padding: 12px; border-radius: 6px; border: 1px solid #faebcc;">
                         <label class="i18n-cat-select" style="color: #8a6d3b;">1. حدد القسم أولاً <span class="required-tag">*</span></label>
                         <select id="pCategory" required style="background: #fff; font-weight: bold;">
@@ -162,6 +164,15 @@
 
             <div class="card">
                 <h3 class="i18n-prod-list">قائمة المنتجات المتاحة</h3>
+                
+                <!-- 🔍 أدوات البحث والفلترة للمنتجات في الإدارة -->
+                <div style="display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap;">
+                    <input type="text" id="adminSearchProd" oninput="filterAdminProducts()" placeholder="🔍 ابحث عن منتج بالاسم..." style="flex: 2; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px;">
+                    <select id="adminFilterCat" onchange="filterAdminProducts()" style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px;">
+                        <option value="">جميع الأقسام</option>
+                    </select>
+                </div>
+
                 <table>
                     <thead>
                         <tr>
@@ -283,7 +294,6 @@
 
         <!-- 5. تبويب الإعدادات -->
         <section id="sec-settings" class="tab-content">
-            <!-- قسم اسم المتجر -->
             <div class="card">
                 <h3>🏪 اسم المتجر</h3>
                 <div style="margin-top:15px;">
@@ -333,6 +343,7 @@
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let currentLang = 'ar';
+        let allAdminProducts = [];
 
         const translations = {
             ar: {
@@ -399,19 +410,31 @@
         // ================= 1. المنتجات =================
         async function fetchProducts() {
             const { data, error } = await db.from('products').select('*').order('id', { ascending: false });
+            if (!error && data) {
+                allAdminProducts = data;
+                filterAdminProducts();
+            } else {
+                document.getElementById('tblProducts').innerHTML = '<tr><td colspan="4">حدث خطأ في تحميل المنتجات.</td></tr>';
+            }
+        }
+
+        function filterAdminProducts() {
+            const q = document.getElementById('adminSearchProd').value.toLowerCase().trim();
+            const catId = document.getElementById('adminFilterCat').value;
             const tbody = document.getElementById('tblProducts');
-            
-            if (error || !data) {
-                tbody.innerHTML = '<tr><td colspan="4">حدث خطأ في تحميل المنتجات.</td></tr>';
+
+            const filtered = allAdminProducts.filter(p => {
+                const matchName = !q || (p.title && p.title.toLowerCase().includes(q)) || (p.title_en && p.title_en.toLowerCase().includes(q));
+                const matchCat = !catId || p.category_id == catId;
+                return matchName && matchCat;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4">لا توجد نتائج تطابق البحث.</td></tr>';
                 return;
             }
 
-            if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="4">لا توجد منتجات مسجلة.</td></tr>';
-                return;
-            }
-
-            tbody.innerHTML = data.map(p => `
+            tbody.innerHTML = filtered.map(p => `
                 <tr>
                     <td><img src="${p.image}" class="img-thumb" alt=""></td>
                     <td>${p.title} ${p.title_en ? `<br><small style="color:#888;">(${p.title_en})</small>` : ''}</td>
@@ -457,7 +480,8 @@
         async function fetchCategories() {
             const { data } = await db.from('categories').select('*').order('id', { ascending: true });
             const tbody = document.getElementById('tblCategories');
-            const select = document.getElementById('pCategory');
+            const selectForm = document.getElementById('pCategory');
+            const selectFilter = document.getElementById('adminFilterCat');
 
             if (data && data.length > 0) {
                 tbody.innerHTML = data.map(c => `
@@ -468,11 +492,15 @@
                     </tr>
                 `).join('');
 
-                select.innerHTML = '<option value="" disabled selected>-- اختر القسم الذي ينتمي إليه المنتج --</option>' +
+                selectForm.innerHTML = '<option value="" disabled selected>-- اختر القسم الذي ينتمي إليه المنتج --</option>' +
+                    data.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+
+                selectFilter.innerHTML = '<option value="">جميع الأقسام</option>' +
                     data.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
             } else {
                 tbody.innerHTML = '<tr><td colspan="3">لا توجد أقسام مسجلة.</td></tr>';
-                select.innerHTML = '<option value="" disabled selected>⚠️ لا توجد أقسام، قم بإضافة قسم أولاً من تبويب (إدارة الأقسام)</option>';
+                selectForm.innerHTML = '<option value="" disabled selected>⚠️ لا توجد أقسام، قم بإضافة قسم أولاً</option>';
+                selectFilter.innerHTML = '<option value="">جميع الأقسام</option>';
             }
         }
 
