@@ -3,311 +3,327 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="siteTitle">المتجر | أصالة وجودة المنتجات</title>
+    <title id="siteTitle">متجرنا | أصالة وجودة المنتجات</title>
 
     <!-- Supabase JS Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            --primary: #c59b27;
-            --primary-dark: #9a781a;
-            --primary-light: #f7f1e1;
-            --dark: #1f1915;
-            --light-bg: #faf8f5;
+            --bg-main: #f9f9f9;
             --white: #ffffff;
-            --text-main: #2d2621;
-            --text-muted: #756a63;
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s ease;
+            --black: #121212;
+            --dark-brown: #3d2817;
+            --light-brown: #5a3e2b;
+            --gold: #c59b27;
+            --gold-light: #f3e9cc;
+            --gray-text: #666666;
+            --border-color: #e5e5e5;
+            --whatsapp-green: #25d366;
+            --shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            --transition: all 0.25s ease;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tajawal', sans-serif; }
-        body { background-color: var(--light-bg); color: var(--text-main); line-height: 1.6; }
+        body { background-color: var(--bg-main); color: var(--black); line-height: 1.5; }
 
-        header {
-            background: rgba(31, 25, 21, 0.95);
-            backdrop-filter: blur(10px);
-            position: sticky; top: 0; z-index: 1000;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        /* 1. الشريط الترويجي العلوي */
+        .top-promo-bar {
+            background-color: var(--black);
+            color: var(--gold);
+            text-align: center;
+            font-size: 0.85rem;
+            padding: 8px 15px;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(197, 155, 39, 0.2);
         }
 
-        .navbar {
-            max-width: 1200px; margin: 0 auto;
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 20px; flex-wrap: wrap; gap: 15px;
+        /* 2. الهيدر الرئيسي (شبيه بـ Temu) */
+        header {
+            background-color: var(--white);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky; top: 0; z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+
+        .header-container {
+            max-width: 1300px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 20px; gap: 20px;
         }
 
         .brand-logo {
-            font-size: 1.5rem; font-weight: 800; color: var(--primary);
+            font-size: 1.6rem; font-weight: 900; color: var(--dark-brown);
             text-decoration: none; display: flex; align-items: center; gap: 8px;
         }
+        .brand-logo span { color: var(--gold); }
 
-        .nav-links { display: flex; gap: 20px; list-style: none; align-items: center; }
-        .nav-links a { color: #e5dec9; text-decoration: none; font-weight: 500; transition: var(--transition); }
-        .nav-links a:hover { color: var(--primary); }
-
-        .header-controls { display: flex; align-items: center; gap: 10px; }
-        .control-select {
-            background-color: rgba(255, 255, 255, 0.1); color: #fff;
-            border: 1px solid var(--primary); padding: 6px 12px; border-radius: 20px;
-            font-size: 0.85rem; cursor: pointer; outline: none; transition: var(--transition);
-        }
-        .control-select option { background-color: var(--dark); color: #fff; }
-
-        .hero {
-            background: linear-gradient(rgba(31, 25, 21, 0.82), rgba(31, 25, 21, 0.85)), 
-                        url('https://images.unsplash.com/photo-1587049352847-4a222e784d38?q=80&w=1600') center/cover no-repeat;
-            color: var(--white); text-align: center; padding: 80px 20px 60px;
+        /* شريط البحث المركزي الكبير */
+        .search-bar-center {
+            flex: 1; max-width: 600px; position: relative;
+            display: flex; align-items: center;
         }
 
-        .hero h1 { font-size: 2.8rem; font-weight: 800; margin-bottom: 15px; color: var(--primary); }
-        .hero p { font-size: 1.2rem; max-width: 650px; margin: 0 auto 30px; color: #d1c7b7; }
-
-        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
-        .section-title { text-align: center; margin-bottom: 30px; }
-        .section-title h2 { font-size: 2rem; color: var(--dark); position: relative; display: inline-block; padding-bottom: 10px; }
-        .section-title h2::after {
-            content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-            width: 60px; height: 3px; background-color: var(--primary); border-radius: 2px;
-        }
-
-        /* 🔍 أدوات البحث والفلترة المتقدمة */
-        .filter-bar-wrapper {
-            background: var(--white);
-            padding: 20px;
-            border-radius: 16px;
-            box-shadow: var(--shadow);
-            margin-bottom: 35px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            border: 1px solid #f0eae1;
-        }
-
-        .search-row {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .search-input-box {
-            flex: 2;
-            min-width: 250px;
-            position: relative;
-        }
-
-        .search-input-box input {
-            width: 100%;
-            padding: 12px 40px 12px 15px;
-            border: 1px solid #e2dad1;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            outline: none;
+        .search-bar-center input {
+            width: 100%; padding: 12px 20px 12px 50px;
+            border: 2px solid var(--gold); border-radius: 30px;
+            outline: none; font-size: 0.95rem; background-color: #fff;
             transition: var(--transition);
         }
+        html[dir="ltr"] .search-bar-center input { padding: 12px 50px 12px 20px; }
 
-        html[dir="ltr"] .search-input-box input {
-            padding: 12px 15px 12px 40px;
+        .search-bar-center button {
+            position: absolute; left: 5px; background: var(--dark-brown); color: var(--gold);
+            border: none; width: 40px; height: 40px; border-radius: 50%;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            font-size: 1rem; transition: var(--transition);
+        }
+        html[dir="ltr"] .search-bar-center button { left: auto; right: 5px; }
+        .search-bar-center button:hover { background: var(--gold); color: var(--black); }
+
+        /* أدوات التحكم (العملة واللغة) */
+        .header-actions {
+            display: flex; align-items: center; gap: 10px;
         }
 
-        .search-input-box input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(197, 155, 39, 0.15);
+        .control-select {
+            background-color: var(--bg-main); color: var(--dark-brown);
+            border: 1px solid var(--border-color); padding: 7px 12px;
+            border-radius: 20px; font-size: 0.85rem; font-weight: 700; cursor: pointer;
+            outline: none; transition: var(--transition);
+        }
+        .control-select:hover { border-color: var(--gold); }
+
+        /* 3. شريط التنقل السفلي للهيدر (الأقسام السريعة) */
+        .sub-nav {
+            background-color: var(--dark-brown);
+            padding: 0 20px; display: flex; justify-content: center; gap: 30px;
+            overflow-x: auto; white-space: nowrap;
+        }
+        .sub-nav a {
+            color: #e5dec9; text-decoration: none; padding: 10px 5px;
+            font-size: 0.9rem; font-weight: 600; transition: var(--transition);
+            border-bottom: 2px solid transparent;
+        }
+        .sub-nav a:hover, .sub-nav a.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+        /* المحتوى الرئيسي */
+        .main-container { max-width: 1300px; margin: 0 auto; padding: 30px 20px; }
+
+        /* 4. تصميم بانر الترحيب (Hero) */
+        .hero-banner {
+            background: linear-gradient(135deg, var(--black), var(--dark-brown));
+            color: var(--white); border-radius: 16px; padding: 45px 30px;
+            margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 10px 30px rgba(61, 40, 23, 0.15);
+            border: 1px solid rgba(197, 155, 39, 0.3);
+        }
+        .hero-text h1 { font-size: 2.3rem; font-weight: 900; color: var(--gold); margin-bottom: 10px; }
+        .hero-text p { font-size: 1.1rem; color: #d1c7b7; max-width: 500px; }
+
+        /* الفلاتر والأقسام الأفقية الأنيقة */
+        .filter-section {
+            display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; margin-bottom: 25px;
+            scrollbar-width: none;
+        }
+        .filter-section::-webkit-scrollbar { display: none; }
+
+        .chip-btn {
+            background-color: var(--white); border: 1px solid var(--border-color);
+            padding: 8px 22px; border-radius: 20px; cursor: pointer; font-size: 0.9rem;
+            font-weight: 700; color: var(--black); white-space: nowrap; transition: var(--transition);
+            box-shadow: var(--shadow);
+        }
+        .chip-btn:hover, .chip-btn.active {
+            background-color: var(--dark-brown); color: var(--gold); border-color: var(--gold);
         }
 
-        .search-icon {
-            position: absolute;
-            top: 50%;
-            right: 15px;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            pointer-events: none;
+        /* 5. شبكة المنتجات (مطابقة لـ Temu) */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
         }
 
-        html[dir="ltr"] .search-icon {
-            right: auto;
-            left: 15px;
-        }
-
-        .sort-select-box {
-            flex: 1;
-            min-width: 180px;
-        }
-
-        .sort-select-box select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #e2dad1;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            outline: none;
-            background: var(--white);
-            cursor: pointer;
-        }
-
-        .categories-filter { display: flex; flex-wrap: wrap; gap: 8px; }
-        .filter-btn {
-            background-color: var(--light-bg); border: 1px solid #e2dad1; padding: 8px 18px;
-            border-radius: 20px; cursor: pointer; font-size: 0.88rem; font-weight: 600;
-            color: var(--text-main); transition: var(--transition);
-        }
-        .filter-btn:hover, .filter-btn.active { background-color: var(--primary); color: var(--dark); border-color: var(--primary); }
-
-        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 25px; }
         .product-card {
-            background: var(--white); border-radius: 16px; overflow: hidden;
-            box-shadow: var(--shadow); transition: var(--transition); display: flex;
-            flex-direction: column; border: 1px solid #f0eae1;
+            background-color: var(--white); border-radius: 12px; overflow: hidden;
+            border: 1px solid var(--border-color); transition: var(--transition);
+            display: flex; flex-direction: column; position: relative;
+            box-shadow: var(--shadow);
         }
-        .product-card:hover { transform: translateY(-6px); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12); }
-        .product-img-wrapper { position: relative; width: 100%; height: 220px; overflow: hidden; background-color: #f9f6f0; }
-        .product-img { width: 100%; height: 100%; object-fit: cover; transition: var(--transition); }
-        .product-card:hover .product-img { transform: scale(1.06); }
-        .product-info { padding: 18px; display: flex; flex-direction: column; flex-grow: 1; }
-        .product-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 5px; color: var(--dark); }
-        .product-subtitle { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px; }
-        .product-footer { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px dashed #eee; }
-        .product-price { font-size: 1.2rem; font-weight: 800; color: var(--primary-dark); }
-        .btn-order-wa {
-            background-color: #25d366; color: #fff; padding: 8px 14px; border-radius: 8px;
-            text-decoration: none; font-size: 0.85rem; font-weight: 700; display: flex;
-            align-items: center; gap: 5px; transition: var(--transition);
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--gold);
+            box-shadow: 0 12px 25px rgba(197, 155, 39, 0.15);
         }
-        .btn-order-wa:hover { background-color: #1eb956; }
 
-        .blog-section { background-color: #f3efe6; padding: 60px 20px; }
-        .blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto; }
-        .blog-card { background: var(--white); border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); transition: var(--transition); }
-        .blog-card:hover { transform: translateY(-5px); }
-        .blog-img { width: 100%; height: 190px; object-fit: cover; }
-        .blog-body { padding: 20px; }
-        .blog-date { font-size: 0.8rem; color: var(--primary-dark); font-weight: 700; margin-bottom: 8px; }
-        .blog-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 10px; color: var(--dark); }
-        .blog-excerpt { font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; }
-
-        .floating-wa {
-            position: fixed; bottom: 25px; left: 25px; background-color: #25d366; color: white;
-            width: 58px; height: 58px; border-radius: 50%; display: flex; justify-content: center;
-            align-items: center; box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4); z-index: 999;
-            text-decoration: none; transition: var(--transition);
+        .product-img-box {
+            width: 100%; height: 200px; background-color: #f1f1f1; position: relative; overflow: hidden;
         }
-        html[dir="ltr"] .floating-wa { left: auto; right: 25px; }
-        .floating-wa:hover { transform: scale(1.1); }
-        .floating-wa svg { width: 30px; height: 30px; fill: white; }
+        .product-img-box img {
+            width: 100%; height: 100%; object-fit: cover; transition: var(--transition);
+        }
+        .product-card:hover .product-img-box img { transform: scale(1.05); }
 
-        footer { background-color: var(--dark); color: #d1c7b7; padding: 40px 20px 20px; text-align: center; }
-        .social-icons { display: flex; justify-content: center; gap: 12px; margin: 18px 0; }
-        .social-btn {
-            color: var(--white); background: rgba(255, 255, 255, 0.08); width: 38px; height: 38px;
+        .product-details { padding: 14px; display: flex; flex-direction: column; flex-grow: 1; }
+        
+        .product-title {
+            font-size: 0.95rem; font-weight: 700; color: var(--black);
+            margin-bottom: 6px; display: -webkit-box; -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical; overflow: hidden; height: 2.8em;
+        }
+        .product-subtitle { font-size: 0.75rem; color: var(--gray-text); margin-bottom: 10px; }
+
+        .product-bottom-row {
+            margin-top: auto; display: flex; align-items: center; justify-content: space-between;
+            padding-top: 10px; border-top: 1px dashed var(--border-color);
+        }
+
+        .product-price {
+            font-size: 1.15rem; font-weight: 900; color: var(--dark-brown);
+        }
+        .product-price small { font-size: 0.75rem; font-weight: 700; color: var(--gold); }
+
+        .btn-whatsapp-order {
+            background-color: var(--whatsapp-green); color: var(--white);
+            border: none; padding: 7px 12px; border-radius: 8px; font-size: 0.8rem;
+            font-weight: 700; cursor: pointer; text-decoration: none; display: flex;
+            align-items: center; gap: 4px; transition: var(--transition);
+        }
+        .btn-whatsapp-order:hover { background-color: #1eb956; transform: scale(1.03); }
+
+        /* 6. قسم المدونة بتصميم بطاقات فخمة */
+        .blog-section { background-color: var(--white); padding: 50px 20px; margin-top: 50px; border-top: 1px solid var(--border-color); }
+        .section-header { text-align: center; margin-bottom: 30px; }
+        .section-header h2 { font-size: 1.8rem; font-weight: 900; color: var(--dark-brown); }
+
+        .blog-grid { max-width: 1300px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px; }
+        .blog-card {
+            border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden;
+            background: var(--bg-main); transition: var(--transition);
+        }
+        .blog-card:hover { border-color: var(--gold); transform: translateY(-3px); }
+        .blog-img { width: 100%; height: 180px; object-fit: cover; }
+        .blog-content { padding: 16px; }
+        .blog-date { font-size: 0.75rem; color: var(--gold); font-weight: 700; margin-bottom: 5px; }
+        .blog-title { font-size: 1.05rem; font-weight: 800; color: var(--black); margin-bottom: 8px; }
+        .blog-desc { font-size: 0.85rem; color: var(--gray-text); line-height: 1.5; }
+
+        /* زر الواتساب العائم الفاخر */
+        .floating-whatsapp {
+            position: fixed; bottom: 25px; left: 25px; background-color: var(--whatsapp-green);
+            color: white; width: 60px; height: 60px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; box-shadow: 0 5px 20px rgba(37, 211, 102, 0.4);
+            z-index: 999; text-decoration: none; transition: var(--transition);
+        }
+        html[dir="ltr"] .floating-whatsapp { left: auto; right: 25px; }
+        .floating-whatsapp:hover { transform: scale(1.1); }
+        .floating-whatsapp svg { width: 32px; height: 32px; fill: white; }
+
+        /* 7. الفوتر الفاخر */
+        footer {
+            background-color: var(--black); color: #d1c7b7; padding: 40px 20px 20px;
+            text-align: center; border-top: 3px solid var(--gold);
+        }
+        footer h3 { color: var(--gold); font-size: 1.4rem; font-weight: 900; margin-bottom: 8px; }
+        .social-row { display: flex; justify-content: center; gap: 15px; margin: 20px 0; }
+        .social-link {
+            background: rgba(255, 255, 255, 0.08); color: var(--gold); width: 40px; height: 40px;
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            text-decoration: none; transition: var(--transition);
+            text-decoration: none; font-weight: bold; transition: var(--transition);
         }
-        .social-btn:hover { background: var(--primary); color: var(--dark); }
+        .social-link:hover { background: var(--gold); color: var(--black); }
 
         @media (max-width: 768px) {
-            .navbar { justify-content: center; }
-            .hero h1 { font-size: 2rem; }
-            .nav-links { display: none; }
-            .search-row { flex-direction: column; }
+            .header-container { flex-direction: column; gap: 10px; }
+            .search-bar-center { width: 100%; max-width: 100%; }
+            .hero-banner { flex-direction: column; text-align: center; padding: 30px 15px; }
+            .hero-text p { margin: 0 auto; }
         }
     </style>
 </head>
 <body>
 
-    <!-- الشريط العلوي -->
-    <header>
-        <div class="navbar">
-            <a href="#" class="brand-logo" id="navBrand">🍯 المتجر</a>
-            
-            <ul class="nav-links">
-                <li><a href="#products" class="i18n-nav-products">المنتجات</a></li>
-                <li><a href="#blog" class="i18n-nav-blog">المدونة</a></li>
-                <li><a href="#contact" class="i18n-nav-contact">تواصل معنا</a></li>
-            </ul>
+    <!-- 1. شريط الإعلانات العلوي -->
+    <div class="top-promo-bar" id="promoBar">
+        🌟 أهلاً بكم في متجرنا — عروض حصرية وجودة أصلية لا تُضاهى! 🌟
+    </div>
 
-            <div class="header-controls">
-                <select class="control-select" id="currencySelect" onchange="changeCurrency(this.value)">
+    <!-- 2. الهيدر المتطور شبيه بـ Temu -->
+    <header>
+        <div class="header-container">
+            <a href="#" class="brand-logo" id="brandLogoText">🍯 <span>أرض حمير</span></a>
+
+            <!-- شريط البحث الفوري -->
+            <div class="search-bar-center">
+                <input type="text" id="liveSearchInput" oninput="filterStoreProducts()" placeholder="ابحث عن المنتجات بالاسم أو المواصفات...">
+                <button onclick="filterStoreProducts()">🔍</button>
+            </div>
+
+            <!-- أدوات العملة واللغة -->
+            <div class="header-actions">
+                <select class="control-select" id="currencySelector" onchange="changeStoreCurrency(this.value)">
                     <option value="YER">🇾🇪 ر.ي</option>
                     <option value="SAR">🇸🇦 SAR</option>
                     <option value="USD">🇺🇸 USD</option>
                     <option value="JOD">🇯🇴 JOD</option>
                 </select>
 
-                <select class="control-select" id="langSelect" onchange="changeLanguage(this.value)">
-                    <option value="ar">العربية 🇸🇦</option>
-                    <option value="en">English 🇬🇧</option>
+                <select class="control-select" id="langSelector" onchange="changeStoreLanguage(this.value)">
+                    <option value="ar">العربية</option>
+                    <option value="en">English</option>
                 </select>
             </div>
         </div>
+
+        <!-- شريط التصنيفات الفرعي -->
+        <nav class="sub-nav">
+            <a href="#products" class="active">الرئيسية والمنتجات</a>
+            <a href="#blog">المدونة والأخبار</a>
+            <a href="#contact">تواصل معنا</a>
+        </nav>
     </header>
 
-    <!-- قسم الهيرو -->
-    <section class="hero">
-        <h1 id="heroTitle">متجرنا لخيرات الطبيعة</h1>
-        <p id="heroDesc">نقدم لكم أجود أنواع المنتجات الأصيلة مباشرة إليكم.</p>
-    </section>
+    <!-- 3. المحتوى الرئيسي -->
+    <div class="main-container">
 
-    <!-- قسم المنتجات وبلاطة البحث والفلترة -->
-    <main class="container" id="products">
-        <div class="section-title">
-            <h2 id="secTitleProducts">منتجاتنا المميزة</h2>
+        <!-- بانر ترحيبي فاخر -->
+        <div class="hero-banner">
+            <div class="hero-text">
+                <h1 id="heroTitle">خيرات الطبيعة بين يديك</h1>
+                <p id="heroSubtitle">تسوق أحدث المنتجات الأصلية والمميزة بأفضل الأسعار وبجودة مضمونة.</p>
+            </div>
         </div>
 
-        <!-- 🔍 لوحة البحث والفلترة بالكامل -->
-        <div class="filter-bar-wrapper">
-            <div class="search-row">
-                <!-- شريط البحث بالاسم -->
-                <div class="search-input-box">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" id="prodSearchInput" oninput="applyFilters()" placeholder="ابحث باسم المنتج (عربي أو إنجليزي)...">
-                </div>
-
-                <!-- خيارات الترتيب والفرز حسب السعر -->
-                <div class="sort-select-box">
-                    <select id="prodSortSelect" onchange="applyFilters()">
-                        <option value="default">الترتيب الافتراضي</option>
-                        <option value="price-low">السعر: من الأقل للأعلى</option>
-                        <option value="price-high">السعر: من الأعلى للأقل</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- أزرار الأقسام والفلترة المباشرة -->
-            <div class="categories-filter" id="categoriesContainer">
-                <button class="filter-btn active" onclick="filterCategory(null, this)">الكل</button>
-            </div>
+        <!-- شريط فلاتر الأقسام (تصميم شرائح أفقية متحركة) -->
+        <div class="filter-section" id="categoriesChips">
+            <button class="chip-btn active" onclick="selectCategory(null, this)">الكل</button>
+            <!-- يتم تعبئة الأقسام ديناميكياً هنا -->
         </div>
 
         <!-- شبكة عرض المنتجات -->
         <div class="products-grid" id="productsGrid">
-            <p style="text-align: center; grid-column: 1/-1;">جاري تحميل المنتجات...</p>
+            <p style="text-align: center; grid-column: 1/-1; padding: 40px; color: var(--gray-text);">جاري التحميل...</p>
         </div>
-    </main>
+    </div>
 
-    <!-- قسم المدونة ومربع البحث بالأخبار -->
+    <!-- 4. قسم المدونة -->
     <section class="blog-section" id="blog">
-        <div class="section-title">
-            <h2 id="secTitleBlog">المدونة والأخبار</h2>
+        <div class="section-header">
+            <h2>المدونة والأخبار</h2>
+            <p style="color: var(--gray-text); font-size: 0.9rem;">تعرف على أحدث المقالات والفوائد</p>
         </div>
-
-        <!-- شريط بحث المقالات -->
-        <div style="max-width: 500px; margin: 0 auto 30px;" class="search-input-box">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="blogSearchInput" oninput="renderBlog()" placeholder="ابحث في المقالات والأخبار...">
-        </div>
-
-        <div class="blog-grid" id="blogGrid">
-            <p style="text-align: center; grid-column: 1/-1;">جاري تحميل المقالات...</p>
+        <div class="blog-grid" id="blogGridContainer">
+            <p style="text-align: center; grid-column: 1/-1; color: var(--gray-text);">جاري تحميل المقالات...</p>
         </div>
     </section>
 
-    <!-- زر الواتساب العائم -->
-    <a href="#" id="floatingWhatsapp" class="floating-wa" target="_blank" title="تواصل معنا عبر واتساب">
+    <!-- زر واتساب عائم -->
+    <a href="#" id="floatingWaBtn" class="floating-whatsapp" target="_blank" title="تواصل معنا عبر واتساب">
         <svg viewBox="0 0 32 32">
             <path d="M16 2a13.9 13.9 0 0 0-12 21L2 30l7.2-1.9A13.9 13.9 0 1 0 16 2zm0 25.5a11.5 11.5 0 0 1-5.9-1.6l-.4-.2-4.4 1.1 1.2-4.3-.3-.4A11.5 11.5 0 1 1 16 27.5zm6.3-8.6c-.3-.2-2-.1-2.3-1.1s-.8-1.1-1.1-1.1h-.9a1.8 1.8 0 0 0-1.3.6 5.6 5.6 0 0 0-1.7 4.1c0 2.4 1.8 4.7 2 5 .3.3 3.5 5.3 8.4 7.4 1.2.5 2.1.8 2.8 1a6.8 6.8 0 0 0 3.1.2 5 5 0 0 0 3.3-2.3 4 4 0 0 0 .3-2.3c-.2-.4-1-.6-1.3-.8z"/>
         </svg>
@@ -315,154 +331,113 @@
 
     <!-- الفوتر -->
     <footer id="contact">
-        <h3 style="color: var(--primary);" id="footerTitle">المتجر</h3>
-        <p style="margin-top: 8px; font-size: 0.9rem;" id="footerDesc">جودة وأصالة المنتجات بين يديك.</p>
-        <div class="social-icons" id="socialContainer"></div>
-        <p style="font-size: 0.8rem; margin-top: 20px; color: #888;" id="footerCopyright">&copy; 2026 جميع الحقوق محفوظة.</p>
+        <h3 id="footerBrandName">أرض حمير</h3>
+        <p style="font-size: 0.9rem; color: #b3a896;">جودة وأصالة المنتجات الطبيعية بين يديك.</p>
+        <div class="social-row" id="socialLinksRow"></div>
+        <p style="font-size: 0.75rem; color: #756a63; margin-top: 15px;" id="footerCopy">&copy; 2026 جميع الحقوق محفوظة.</p>
     </footer>
 
+    <!-- سكريبت البرمجة والربط بـ Supabase -->
     <script>
         const SUPABASE_URL = 'https://gygjtvfwhdfiwcahdqyw.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_TPyNp8bSFHE6xO5GGdEtbA_8_53idMv';
         const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let activeWhatsappNumber = '';
-        let rawProductsData = [];
-        let rawBlogData = [];
-        let currentSelectedCategory = null;
+        let allProducts = [];
+        let allCategories = [];
+        let selectedCategoryId = null;
         let currentLang = 'ar';
         let currentCurrency = 'YER';
+        let currencyRates = { YER: 1, SAR: 1, USD: 1, JOD: 1 };
 
-        let rates = { YER: 1, SAR: 1, USD: 1, JOD: 1 };
-
-        const storeTranslations = {
-            ar: {
-                navProducts: "المنتجات", navBlog: "المدونة", navContact: "تواصل معنا",
-                heroDesc: "نقدم لكم أجود أنواع المنتجات الأصيلة مباشرة إليكم.",
-                secProducts: "منتجاتنا المميزة", secBlog: "المدونة والأخبار",
-                orderWa: "طلب عبر واتساب", footerDesc: "جودة وأصالة المنتجات الطبيعية بين يديك.",
-                allCat: "الكل"
-            },
-            en: {
-                navProducts: "Products", navBlog: "Blog", navContact: "Contact Us",
-                heroDesc: "Offering you the finest natural products directly to your doorstep.",
-                secProducts: "Featured Products", secBlog: "Blog & News",
-                orderWa: "Order via WhatsApp", footerDesc: "Quality and authenticity of natural products in your hands.",
-                allCat: "All"
-            }
+        const dict = {
+            ar: { orderBtn: "طلب واتساب", all: "الكل" },
+            en: { orderBtn: "WhatsApp Order", all: "All" }
         };
 
-        async function loadSettings() {
+        // 1. جلب إعدادات المتجر العامة
+        async function fetchStoreSettings() {
             try {
-                const { data } = await db.from('store_settings').select('*').limit(1).single();
+                const { data } = await db.from('store_settings').select('*').single();
                 if (data) {
                     if (data.store_name) {
-                        const name = data.store_name;
-                        document.getElementById('siteTitle').innerText = name;
-                        document.getElementById('navBrand').innerText = `🍯 ${name}`;
-                        document.getElementById('heroTitle').innerText = name;
-                        document.getElementById('footerTitle').innerText = name;
+                        document.getElementById('siteTitle').innerText = data.store_name;
+                        document.getElementById('brandLogoText').innerHTML = `🍯 <span>${data.store_name}</span>`;
+                        document.getElementById('heroTitle').innerText = `${data.store_name} لخيرات الطبيعة`;
+                        document.getElementById('footerBrandName').innerText = data.store_name;
                     }
                     if (data.whatsapp_number) {
                         activeWhatsappNumber = data.whatsapp_number.replace(/[^0-9]/g, '');
-                        document.getElementById('floatingWhatsapp').href = `https://wa.me/${activeWhatsappNumber}`;
+                        document.getElementById('floatingWaBtn').href = `https://wa.me/${activeWhatsappNumber}`;
                     }
-                    rates.SAR = data.rate_sar || 1;
-                    rates.USD = data.rate_usd || 1;
-                    rates.JOD = data.rate_jod || 1;
+                    currencyRates.SAR = data.rate_sar || 1;
+                    currencyRates.USD = data.rate_usd || 1;
+                    currencyRates.JOD = data.rate_jod || 1;
                 }
             } catch (err) { console.log(err); }
         }
 
-        function changeLanguage(lang) {
-            currentLang = lang;
-            document.getElementById('htmlTag').dir = lang === 'ar' ? 'rtl' : 'ltr';
-            document.getElementById('htmlTag').lang = lang;
-
-            const t = storeTranslations[lang];
-            document.querySelector('.i18n-nav-products').innerText = t.navProducts;
-            document.querySelector('.i18n-nav-blog').innerText = t.navBlog;
-            document.querySelector('.i18n-nav-contact').innerText = t.navContact;
-            document.getElementById('heroDesc').innerText = t.heroDesc;
-            document.getElementById('secTitleProducts').innerText = t.secProducts;
-            document.getElementById('secTitleBlog').innerText = t.secBlog;
-            document.getElementById('footerDesc').innerText = t.footerDesc;
-
-            applyFilters();
-            renderBlog();
-        }
-
-        function changeCurrency(curr) {
-            currentCurrency = curr;
-            applyFilters();
-        }
-
-        async function loadCategories() {
+        // 2. جلب الأقسام
+        async function fetchCategories() {
             const { data } = await db.from('categories').select('*').order('id', { ascending: true });
-            const container = document.getElementById('categoriesContainer');
-            if (data && data.length > 0) {
-                const catHtml = data.map(c => `<button class="filter-btn" onclick="filterCategory(${c.id}, this)">${c.name}</button>`).join('');
-                container.innerHTML = `<button class="filter-btn active" onclick="filterCategory(null, this)">${storeTranslations[currentLang].allCat}</button>` + catHtml;
-            }
+            allCategories = data || [];
+            const container = document.getElementById('categoriesChips');
+            
+            const allText = dict[currentLang].all;
+            let html = `<button class="chip-btn active" onclick="selectCategory(null, this)">${allText}</button>`;
+            
+            allCategories.forEach(c => {
+                html += `<button class="chip-btn" onclick="selectCategory(${c.id}, this)">${c.name}</button>`;
+            });
+            container.innerHTML = html;
         }
 
-        async function loadProducts() {
+        // 3. جلب المنتجات
+        async function fetchProducts() {
             const { data } = await db.from('products').select('*').order('id', { ascending: false });
-            rawProductsData = data || [];
-            applyFilters();
+            allProducts = data || [];
+            filterStoreProducts();
         }
 
-        // 🧠 إمكانية البحث والفلترة المعقدة لجميع المنتجات
-        function applyFilters() {
-            const searchQuery = document.getElementById('prodSearchInput').value.toLowerCase().trim();
-            const sortVal = document.getElementById('prodSortSelect').value;
+        // 4. فلترة وعرض المنتجات (بحث + أقسام + عملة)
+        function filterStoreProducts() {
+            const query = document.getElementById('liveSearchInput').value.toLowerCase().trim();
+            const grid = document.getElementById('productsGrid');
 
-            let filtered = rawProductsData.filter(p => {
-                const matchCat = currentSelectedCategory === null || p.category_id === currentSelectedCategory;
-                const matchSearch = !searchQuery || 
-                    (p.title && p.title.toLowerCase().includes(searchQuery)) ||
-                    (p.title_en && p.title_en.toLowerCase().includes(searchQuery));
+            let filtered = allProducts.filter(p => {
+                const matchCat = selectedCategoryId === null || p.category_id === selectedCategoryId;
+                const matchSearch = !query || 
+                    (p.title && p.title.toLowerCase().includes(query)) ||
+                    (p.title_en && p.title_en.toLowerCase().includes(query));
                 return matchCat && matchSearch;
             });
 
-            // الترتيب حسب السعر
-            if (sortVal === 'price-low') {
-                filtered.sort((a, b) => a.price - b.price);
-            } else if (sortVal === 'price-high') {
-                filtered.sort((a, b) => b.price - a.price);
-            }
-
-            renderProducts(filtered);
-        }
-
-        function renderProducts(productsList) {
-            const grid = document.getElementById('productsGrid');
-
-            if (productsList.length === 0) {
-                grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #888;">لم يتم العثور على أي منتج يطابق عملية البحث.</p>';
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; padding: 40px; color: var(--gray-text);">لا توجد منتجات مطابقة لعملية البحث.</p>';
                 return;
             }
 
-            const rate = rates[currentCurrency] || 1;
+            const rate = currencyRates[currentCurrency] || 1;
+            const btnText = dict[currentLang].orderBtn;
 
-            grid.innerHTML = productsList.map(p => {
-                const convertedPrice = (p.price * rate).toFixed(currentCurrency === 'YER' ? 0 : 2);
+            grid.innerHTML = filtered.map(p => {
+                const priceConverted = (p.price * rate).toFixed(currentCurrency === 'YER' ? 0 : 2);
                 const title = currentLang === 'en' && p.title_en ? p.title_en : p.title;
-                const waMessage = encodeURIComponent(`مرحباً، أود الإستفسار عن منتج: ${title}`);
-                const waLink = activeWhatsappNumber ? `https://wa.me/${activeWhatsappNumber}?text=${waMessage}` : '#';
+                const waLink = activeWhatsappNumber ? `https://wa.me/${activeWhatsappNumber}?text=${encodeURIComponent('أرغب في طلب هذا المنتج: ' + title)}` : '#';
 
                 return `
                     <div class="product-card">
-                        <div class="product-img-wrapper">
-                            <img src="${p.image || 'https://via.placeholder.com/300'}" class="product-img" alt="${title}">
+                        <div class="product-img-box">
+                            <img src="${p.image || 'https://via.placeholder.com/300'}" alt="${title}">
                         </div>
-                        <div class="product-info">
+                        <div class="product-details">
                             <div class="product-title">${title}</div>
                             ${currentLang === 'ar' && p.title_en ? `<div class="product-subtitle">${p.title_en}</div>` : ''}
-                            <div class="product-footer">
-                                <div class="product-price">${convertedPrice} <small style="font-size: 0.75rem;">${currentCurrency}</small></div>
-                                <a href="${waLink}" target="_blank" class="btn-order-wa">
-                                    ${storeTranslations[currentLang].orderWa}
+                            <div class="product-bottom-row">
+                                <div class="product-price">${priceConverted} <small>${currentCurrency}</small></div>
+                                <a href="${waLink}" target="_blank" class="btn-whatsapp-order">
+                                    💬 ${btnText}
                                 </a>
                             </div>
                         </div>
@@ -471,66 +446,72 @@
             }).join('');
         }
 
-        function filterCategory(catId, btnElement) {
-            currentSelectedCategory = catId;
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        function selectCategory(catId, btnElement) {
+            selectedCategoryId = catId;
+            document.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
             btnElement.classList.add('active');
-            applyFilters();
+            filterStoreProducts();
         }
 
-        async function loadBlog() {
+        // 5. جلب المدونة
+        async function fetchBlogPosts() {
+            const container = document.getElementById('blogGridContainer');
             const { data } = await db.from('blog_posts').select('*').order('id', { ascending: false });
-            rawBlogData = data || [];
-            renderBlog();
-        }
 
-        function renderBlog() {
-            const blogGrid = document.getElementById('blogGrid');
-            const blogSearch = document.getElementById('blogSearchInput').value.toLowerCase().trim();
-
-            const filteredBlog = rawBlogData.filter(b => {
-                return !blogSearch || 
-                    (b.title && b.title.toLowerCase().includes(blogSearch)) ||
-                    (b.content && b.content.toLowerCase().includes(blogSearch));
-            });
-
-            if (filteredBlog.length === 0) {
-                blogGrid.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: #888;">لا توجد مقالات تطابق البحث.</p>';
+            if (!data || data.length === 0) {
+                container.innerHTML = '<p style="text-align: center; grid-column: 1/-1; color: var(--gray-text);">لا توجد مقالات منشورة حالياً.</p>';
                 return;
             }
 
-            blogGrid.innerHTML = filteredBlog.map(b => {
-                const pubDate = new Date(b.created_at).toLocaleDateString(currentLang === 'ar' ? 'ar-YE' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            container.innerHTML = data.map(b => {
+                const dateStr = new Date(b.created_at).toLocaleDateString(currentLang === 'ar' ? 'ar-YE' : 'en-US');
                 return `
-                    <article class="blog-card">
-                        <img src="${b.cover_image || 'https://via.placeholder.com/400x200'}" class="blog-img" alt="${b.title}">
-                        <div class="blog-body">
-                            <div class="blog-date">🗓️ ${pubDate}</div>
-                            <h3 class="blog-title">${b.title}</h3>
-                            <p class="blog-excerpt">${b.content ? b.content.substring(0, 110) + '...' : ''}</p>
+                    <div class="blog-card">
+                        <img src="${b.cover_image || 'https://via.placeholder.com/400'}" class="blog-img" alt="${b.title}">
+                        <div class="blog-content">
+                            <div class="blog-date">📅 ${dateStr}</div>
+                            <div class="blog-title">${b.title}</div>
+                            <div class="blog-desc">${b.content ? b.content.substring(0, 100) + '...' : ''}</div>
                         </div>
-                    </article>
+                    </div>
                 `;
             }).join('');
         }
 
-        async function loadSocialLinks() {
-            const container = document.getElementById('socialContainer');
+        // 6. السوشال ميديا
+        async function fetchSocialLinks() {
+            const container = document.getElementById('socialLinksRow');
             const { data } = await db.from('social_links').select('*').eq('is_active', true);
             if (data && data.length > 0) {
-                container.innerHTML = data.map(s => `<a href="${s.url}" target="_blank" class="social-btn" title="${s.platform_name}">🌐</a>`).join('');
+                container.innerHTML = data.map(s => `<a href="${s.url}" target="_blank" class="social-link" title="${s.platform_name}">🌐</a>`).join('');
             }
         }
 
-        async function init() {
-            await loadSettings();
-            loadCategories();
-            loadProducts();
-            loadBlog();
-            loadSocialLinks();
+        // تبديل اللغة والعملة
+        function changeStoreLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('htmlTag').dir = lang === 'ar' ? 'rtl' : 'ltr';
+            document.getElementById('htmlTag').lang = lang;
+            fetchCategories();
+            filterStoreProducts();
+            fetchBlogPosts();
         }
 
-        init();
+        function changeStoreCurrency(curr) {
+            currentCurrency = curr;
+            filterStoreProducts();
+        }
+
+        // التهيئة والتشغيل
+        async function initStore() {
+            await fetchStoreSettings();
+            await fetchCategories();
+            await fetchProducts();
+            fetchBlogPosts();
+            fetchSocialLinks();
+        }
+
+        initStore();
     </script>
 </body>
 </html>
